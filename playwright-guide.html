@@ -1,0 +1,1227 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code × Playwright MCP — TechByte</title>
+<style>
+/* ===== 기본 설정 ===== */
+:root {
+  --blue:    #1a6fd4;
+  --blue-dk: #1459ac;
+  --blue-lt: #e8f2ff;
+  --navy:    #1a2744;
+  --teal:    #0fa0d4;
+  --green:   #22a06b;
+  --orange:  #e2922b;
+  --red:     #d84040;
+  --gray-1:  #f5f7fa;
+  --gray-2:  #e8edf5;
+  --gray-3:  #b0bac8;
+  --gray-4:  #6b7280;
+  --gray-5:  #374151;
+  --text:    #1a1a2e;
+  --white:   #ffffff;
+  --font:    'Noto Sans KR', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --mono:    'JetBrains Mono', 'Fira Code', 'Consolas', monospace;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; font-size: 15px; }
+body { font-family: var(--font); background: var(--gray-1); color: var(--text); line-height: 1.7; }
+
+/* ===== 레이아웃 ===== */
+.container { max-width: 1100px; margin: 0 auto; padding: 0 32px; }
+
+/* ===== HERO ===== */
+.hero {
+  background: linear-gradient(145deg, #1a2744 0%, #1a6fd4 55%, #0fa0d4 100%);
+  color: white;
+  padding: 72px 0 56px;
+  position: relative;
+  overflow: hidden;
+}
+.hero::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+}
+.hero-inner { position: relative; z-index: 1; }
+.hero-badge {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: rgba(255,255,255,0.15);
+  border: 1px solid rgba(255,255,255,0.25);
+  padding: 5px 14px; border-radius: 20px;
+  font-size: 12px; font-weight: 600; letter-spacing: 0.5px;
+  margin-bottom: 20px;
+}
+.hero h1 { font-size: 40px; font-weight: 800; line-height: 1.2; margin-bottom: 16px; }
+.hero h1 span { color: #7dd3fc; }
+.hero p { font-size: 16px; color: rgba(255,255,255,0.75); max-width: 600px; margin-bottom: 32px; }
+.hero-meta { display: flex; gap: 24px; flex-wrap: wrap; }
+.hero-meta-item { display: flex; align-items: center; gap: 8px; font-size: 13px; color: rgba(255,255,255,0.7); }
+.hero-meta-item strong { color: white; }
+
+/* ===== 네비게이션 (목차) ===== */
+.toc-nav {
+  background: white;
+  border-bottom: 1px solid var(--gray-2);
+  position: sticky; top: 0; z-index: 100;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+}
+.toc-nav ul {
+  display: flex; gap: 0; list-style: none;
+  overflow-x: auto;
+}
+.toc-nav ul::-webkit-scrollbar { height: 3px; }
+.toc-nav ul::-webkit-scrollbar-thumb { background: var(--blue); }
+.toc-nav a {
+  display: block; padding: 14px 18px;
+  font-size: 13px; font-weight: 600;
+  color: var(--gray-4); text-decoration: none;
+  border-bottom: 3px solid transparent;
+  white-space: nowrap;
+  transition: all 0.15s;
+}
+.toc-nav a:hover { color: var(--blue); border-bottom-color: var(--blue); }
+
+/* ===== 섹션 ===== */
+.section { padding: 60px 0; }
+.section + .section { border-top: 1px solid var(--gray-2); }
+.section-tag {
+  display: inline-block;
+  background: var(--blue-lt); color: var(--blue);
+  padding: 3px 10px; border-radius: 4px;
+  font-size: 11px; font-weight: 700; letter-spacing: 0.5px;
+  margin-bottom: 10px;
+}
+.section-title {
+  font-size: 26px; font-weight: 800; color: var(--navy);
+  margin-bottom: 8px;
+}
+.section-sub {
+  font-size: 14px; color: var(--gray-4); margin-bottom: 32px;
+}
+
+/* ===== 카드 ===== */
+.card-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; }
+.card {
+  background: white; border: 1px solid var(--gray-2);
+  border-radius: 12px; padding: 24px;
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+.card:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,0.09); }
+.card-icon { font-size: 28px; margin-bottom: 12px; display: block; }
+.card-title { font-size: 15px; font-weight: 700; color: var(--navy); margin-bottom: 8px; }
+.card-desc { font-size: 13px; color: var(--gray-4); line-height: 1.6; }
+
+/* ===== 스텝 ===== */
+.steps { display: flex; flex-direction: column; gap: 0; }
+.step {
+  display: flex; gap: 20px;
+  padding: 24px 0;
+  border-bottom: 1px dashed var(--gray-2);
+}
+.step:last-child { border-bottom: none; }
+.step-num {
+  flex-shrink: 0;
+  width: 40px; height: 40px;
+  background: var(--blue); color: white;
+  border-radius: 50%; display: flex; align-items: center; justify-content: center;
+  font-size: 16px; font-weight: 800;
+}
+.step-body { flex: 1; }
+.step-title { font-size: 16px; font-weight: 700; color: var(--navy); margin-bottom: 6px; }
+.step-desc { font-size: 13px; color: var(--gray-4); line-height: 1.7; }
+
+/* ===== 코드 블록 ===== */
+.code-wrap {
+  background: #1e2744; border-radius: 10px;
+  overflow: hidden; margin: 16px 0;
+}
+.code-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 8px 16px;
+  background: rgba(255,255,255,0.06);
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+.code-lang { font-size: 11px; font-weight: 700; color: rgba(255,255,255,0.5); font-family: var(--mono); }
+.code-label { font-size: 11px; color: rgba(255,255,255,0.35); }
+pre {
+  font-family: var(--mono); font-size: 13px; line-height: 1.65;
+  padding: 20px 24px; overflow-x: auto; color: #e2e8f0;
+}
+.kw  { color: #93c5fd; }  /* keyword */
+.fn  { color: #a5f3fc; }  /* function */
+.str { color: #86efac; }  /* string */
+.cm  { color: #64748b; font-style: italic; } /* comment */
+.nm  { color: #fca5a5; }  /* number */
+.op  { color: #fcd34d; }  /* operator/decorator */
+
+/* ===== 표 ===== */
+.data-table-wrap { overflow-x: auto; margin: 16px 0; border-radius: 10px; border: 1px solid var(--gray-2); }
+table { width: 100%; border-collapse: collapse; background: white; }
+th {
+  background: var(--gray-1); padding: 10px 14px;
+  font-size: 12px; font-weight: 700; color: var(--gray-5);
+  text-align: left; border-bottom: 2px solid var(--gray-2);
+  white-space: nowrap;
+}
+td { padding: 9px 14px; font-size: 13px; border-bottom: 1px solid #f0f2f5; }
+tr:last-child td { border-bottom: none; }
+tr:hover td { background: #f8faff; }
+.badge {
+  display: inline-block; padding: 2px 8px; border-radius: 10px;
+  font-size: 11px; font-weight: 700;
+}
+.badge-blue  { background: #dbeafe; color: #1d4ed8; }
+.badge-green { background: #dcfce7; color: #166534; }
+.badge-gray  { background: #f3f4f6; color: #374151; }
+.badge-orange{ background: #ffedd5; color: #9a3412; }
+
+/* ===== 프로세스 다이어그램 ===== */
+.process-flow {
+  display: flex; align-items: stretch; gap: 0;
+  background: white; border: 1px solid var(--gray-2);
+  border-radius: 12px; overflow: hidden; margin: 24px 0;
+}
+.process-step {
+  flex: 1; padding: 20px 16px; text-align: center;
+  border-right: 1px solid var(--gray-2);
+  position: relative;
+}
+.process-step:last-child { border-right: none; }
+.process-step::after {
+  content: '→';
+  position: absolute; right: -12px; top: 50%; transform: translateY(-50%);
+  color: var(--blue); font-size: 18px; font-weight: 700; z-index: 1;
+}
+.process-step:last-child::after { display: none; }
+.process-step-icon { font-size: 28px; margin-bottom: 8px; }
+.process-step-title { font-size: 13px; font-weight: 700; color: var(--navy); margin-bottom: 4px; }
+.process-step-desc { font-size: 11px; color: var(--gray-4); }
+
+/* ===== TC 카드 ===== */
+.tc-list { display: flex; flex-direction: column; gap: 12px; }
+.tc-item {
+  background: white; border: 1px solid var(--gray-2);
+  border-radius: 10px; overflow: hidden;
+}
+.tc-header {
+  display: flex; align-items: center; gap: 12px;
+  padding: 12px 16px;
+  cursor: pointer;
+  transition: background 0.1s;
+}
+.tc-header:hover { background: var(--gray-1); }
+.tc-id { font-family: var(--mono); font-size: 12px; font-weight: 700; color: var(--blue); min-width: 160px; }
+.tc-name { font-size: 13px; font-weight: 600; color: var(--navy); flex: 1; }
+.tc-cat { font-size: 11px; padding: 2px 8px; border-radius: 6px; }
+.tc-body {
+  padding: 0 16px 16px;
+  border-top: 1px solid var(--gray-2);
+  font-size: 13px; color: var(--gray-4);
+  display: none;
+}
+.tc-item.open .tc-body { display: block; }
+.tc-item.open .tc-header { background: var(--blue-lt); }
+.tc-field { display: flex; gap: 8px; margin-top: 10px; }
+.tc-field-label { font-weight: 700; color: var(--gray-5); min-width: 70px; font-size: 12px; }
+.tc-field-val { font-size: 12px; color: var(--gray-4); line-height: 1.6; }
+
+/* ===== 팁 박스 ===== */
+.tip-box {
+  display: flex; gap: 14px; align-items: flex-start;
+  padding: 16px 20px; border-radius: 10px; margin: 16px 0;
+}
+.tip-box.info    { background: #eff6ff; border-left: 4px solid var(--blue); }
+.tip-box.success { background: #f0fdf4; border-left: 4px solid var(--green); }
+.tip-box.warning { background: #fffbeb; border-left: 4px solid var(--orange); }
+.tip-box.danger  { background: #fef2f2; border-left: 4px solid var(--red); }
+.tip-icon { font-size: 18px; flex-shrink: 0; margin-top: 2px; }
+.tip-content { font-size: 13px; line-height: 1.7; }
+.tip-content strong { color: var(--navy); display: block; margin-bottom: 4px; }
+
+/* ===== 그리드 비교 ===== */
+.compare-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 16px 0; }
+.compare-item {
+  background: white; border: 1px solid var(--gray-2);
+  border-radius: 10px; overflow: hidden;
+}
+.compare-item-header {
+  padding: 10px 16px; font-size: 13px; font-weight: 700;
+  display: flex; align-items: center; gap: 8px;
+}
+.compare-item-header.green { background: #dcfce7; color: #166534; }
+.compare-item-header.red   { background: #fee2e2; color: #991b1b; }
+.compare-item-body { padding: 12px 16px; font-size: 13px; color: var(--gray-4); }
+
+/* ===== 아키텍처 다이어그램 ===== */
+.arch-diagram {
+  background: white; border: 1px solid var(--gray-2);
+  border-radius: 12px; padding: 32px; margin: 24px 0;
+  text-align: center;
+}
+.arch-layer {
+  margin-bottom: 16px; position: relative;
+}
+.arch-layer-title {
+  font-size: 11px; font-weight: 700; color: var(--gray-4);
+  text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px;
+}
+.arch-boxes { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+.arch-box {
+  padding: 10px 20px; border-radius: 8px;
+  font-size: 13px; font-weight: 600; color: white;
+  min-width: 120px;
+}
+.arch-box.blue   { background: var(--blue); }
+.arch-box.navy   { background: var(--navy); }
+.arch-box.teal   { background: var(--teal); }
+.arch-box.green  { background: var(--green); }
+.arch-box.orange { background: var(--orange); }
+.arch-arrow { color: var(--gray-3); font-size: 22px; margin: 6px 0; }
+
+/* ===== 미리보기 영역 ===== */
+.preview-frame {
+  background: #0f172a; border-radius: 12px; overflow: hidden;
+  margin: 24px 0; border: 1px solid rgba(255,255,255,0.1);
+}
+.preview-bar {
+  background: #1e293b; padding: 10px 16px;
+  display: flex; align-items: center; gap: 8px;
+}
+.preview-dot { width: 10px; height: 10px; border-radius: 50%; }
+.preview-dot.red    { background: #ef4444; }
+.preview-dot.yellow { background: #f59e0b; }
+.preview-dot.green  { background: #10b981; }
+.preview-url {
+  flex: 1; background: #334155; color: rgba(255,255,255,0.5);
+  padding: 4px 12px; border-radius: 6px; font-size: 12px;
+  font-family: var(--mono); margin-left: 8px;
+}
+.preview-body { padding: 0; }
+.preview-body pre { font-size: 12.5px; }
+
+/* ===== 반응형 ===== */
+@media (max-width: 768px) {
+  .hero h1 { font-size: 28px; }
+  .compare-grid { grid-template-columns: 1fr; }
+  .process-flow { flex-direction: column; }
+  .process-step::after { display: none; }
+}
+
+/* ===== 인쇄 ===== */
+@media print {
+  .toc-nav, .tip-box { page-break-inside: avoid; }
+  .section { page-break-before: auto; }
+}
+</style>
+</head>
+<body>
+
+<!-- ===================== HERO ===================== -->
+<div class="hero">
+  <div class="container hero-inner">
+    <div class="hero-badge">🤖 Claude Code × Playwright MCP</div>
+    <h1>Claude Code와 <span>Playwright MCP</span>로<br>E2E 테스트 프로세스 자동화하기</h1>
+    <p>Claude Code와 Playwright MCP를 활용해 화면 개발부터<br>
+    시나리오 자동 생성·실시간 검증까지 개발·테스트 사이클 전체를 자동화합니다.</p>
+    <div class="hero-meta">
+      <div class="hero-meta-item">📁 <strong>프로젝트:</strong> tech-byte-playwright</div>
+      <div class="hero-meta-item">🛠 <strong>스택:</strong> Playwright + Claude Code MCP</div>
+      <div class="hero-meta-item">📅 <strong>작성일:</strong> 2026-05-27</div>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== TOC ===================== -->
+<nav class="toc-nav">
+  <div class="container">
+    <ul>
+      <li><a href="#overview">1. Playwright 기능</a></li>
+      <li><a href="#setup">2. 환경 구성</a></li>
+      <li><a href="#structure">3. 프로젝트 구조</a></li>
+      <li><a href="#mcp">4. Playwright MCP</a></li>
+      <li><a href="#skill">5. 시나리오 자동 생성</a></li>
+      <li><a href="#run">6. 실행 방법 &amp; 토큰 사용량</a></li>
+      <li><a href="#report">7. 결과 분석</a></li>
+      <li><a href="#best">8. 전체 프로세스</a></li>
+    </ul>
+  </div>
+</nav>
+
+<!-- ===================== 1. 개요 ===================== -->
+<section class="section" id="overview">
+  <div class="container">
+    <div class="section-tag">OVERVIEW</div>
+    <div class="section-title">Playwright 핵심 기능</div>
+    <div class="section-sub">이 프로젝트에서 실제로 활용되는 Playwright의 기능들입니다.</div>
+
+
+    <div class="card-grid">
+      <div class="card">
+        <span class="card-icon">🔄</span>
+        <div class="card-title">자동 대기 (Auto-Wait)</div>
+        <div class="card-desc">클릭·입력 등 모든 동작에서 요소가 준비될 때까지 자동으로 대기합니다. 불필요한 sleep() 없이 안정적인 테스트를 작성할 수 있습니다.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">📸</span>
+        <div class="card-title">스크린샷 / 비디오 녹화</div>
+        <div class="card-desc">테스트 실패 시 자동으로 스크린샷과 실행 영상을 저장합니다. Claude Code가 이 결과를 읽어 즉시 원인을 파악합니다.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🧩</span>
+        <div class="card-title">MCP 통합</div>
+        <div class="card-desc">Playwright MCP를 통해 Claude Code가 브라우저를 직접 조작하고 테스트 시나리오를 실시간으로 생성·검증할 수 있습니다.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">📊</span>
+        <div class="card-title">HTML 리포트</div>
+        <div class="card-desc">직관적인 HTML 리포트로 각 TC의 성공/실패 현황, 실행 시간, 스텝 상세 내역을 한눈에 확인합니다.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🤖</span>
+        <div class="card-title">AI 시나리오 자동 생성</div>
+        <div class="card-desc">Claude Code의 /gen-playwright-scenario 커맨드로 화면 소스를 분석해 TC 파일을 자동으로 생성합니다.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">⚡</span>
+        <div class="card-title">빠른 실행 · 병렬 처리</div>
+        <div class="card-desc">Chromium 기반의 네이티브 브라우저 제어로 빠른 실행 속도를 제공하며, 여러 TC를 병렬로 실행할 수 있습니다.</div>
+      </div>
+    </div>
+
+    <!-- 기존 vs Claude Code + Playwright MCP 비교 -->
+    <div style="margin-top: 36px;">
+      <h3 style="font-size:17px; font-weight:700; color:var(--navy); margin-bottom:16px;">기존 방식 vs Claude Code + Playwright MCP</h3>
+      <div class="compare-grid">
+        <div class="compare-item">
+          <div class="compare-item-header red">❌ 기존 수동 개발·테스트</div>
+          <div class="compare-item-body">
+            <ul style="list-style:disc; padding-left:18px; line-height:2;">
+              <li>화면 개발 후 직접 클릭하며 수동 확인</li>
+              <li>테스트 시나리오 작성에 별도 시간 소요</li>
+              <li>검증 결과를 문서로 남기기 번거로움</li>
+              <li>회귀 테스트 시마다 반복 수동 실행</li>
+              <li>버그 재현 어려움 (스크린샷 없음)</li>
+            </ul>
+          </div>
+        </div>
+        <div class="compare-item">
+          <div class="compare-item-header green">✅ Claude Code + Playwright MCP</div>
+          <div class="compare-item-body">
+            <ul style="list-style:disc; padding-left:18px; line-height:2;">
+              <li>자연어로 브라우저 직접 조작·즉시 검증</li>
+              <li>/gen-playwright-scenario로 TC 자동 생성</li>
+              <li>실행마다 스크린샷·리포트 자동 저장</li>
+              <li>npm test 한 번으로 전체 회귀 테스트</li>
+              <li>MCP로 selector 실시간 확인 및 디버깅</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== 2. 환경 구성 ===================== -->
+<section class="section" id="setup">
+  <div class="container">
+    <div class="section-tag">SETUP</div>
+    <div class="section-title">환경 구성</div>
+    <div class="section-sub">Claude Code 프로젝트에 <code>.claude</code> 디렉터리 설정만 추가하면 됩니다.</div>
+
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-body">
+          <div class="step-title">Playwright 설치</div>
+          <div class="step-desc">기존 Vue 프로젝트에 Playwright를 추가합니다.</div>
+          <div class="code-wrap">
+            <div class="code-header">
+              <span class="code-lang">bash</span>
+              <span class="code-label">터미널</span>
+            </div>
+            <pre><span class="cm"># Playwright 설치</span>
+npm install -D @playwright/test
+
+<span class="cm"># 브라우저 바이너리 설치 (Chromium)</span>
+npx playwright install chromium</pre>
+          </div>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-body">
+          <div class="step-title">.claude/mcp.json — Playwright MCP 등록</div>
+          <div class="step-desc">Claude Code가 브라우저를 직접 제어할 수 있도록 MCP 서버를 등록합니다. 이 파일이 있으면 프로젝트를 열 때 자동으로 활성화됩니다.</div>
+          <div class="code-wrap">
+            <div class="code-header">
+              <span class="code-lang">json</span>
+              <span class="code-label">.claude/mcp.json</span>
+            </div>
+            <pre>{
+  <span class="str">"mcpServers"</span>: {
+    <span class="str">"playwright"</span>: {
+      <span class="str">"command"</span>: <span class="str">"npx"</span>,
+      <span class="str">"args"</span>: [<span class="str">"@playwright/mcp@latest"</span>],
+      <span class="str">"env"</span>: {
+        <span class="str">"PLAYWRIGHT_BROWSERS_PATH"</span>: <span class="str">"0"</span>
+      }
+    }
+  }
+}</pre>
+          </div>
+          <div class="tip-box info" style="margin-top:12px;">
+            <span class="tip-icon">💡</span>
+            <div class="tip-content">
+              <strong>MCP 활성화 확인</strong>
+              Claude Code 터미널에서 <code>/mcp</code>를 입력하면 등록된 MCP 서버 목록과 상태를 확인할 수 있습니다.
+              <code>playwright</code> 서버가 <strong>connected</strong> 상태여야 브라우저 조작이 가능합니다.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-body">
+          <div class="step-title">.claude/skills/ — 커스텀 스킬 등록</div>
+          <div class="step-desc">슬래시 커맨드로 호출할 수 있는 AI 스킬 파일을 등록합니다. <code>gen-playwright-scenario.md</code>를 배치하면 <code>/gen-playwright-scenario</code> 커맨드가 활성화됩니다.</div>
+          <div class="code-wrap">
+            <div class="code-header">
+              <span class="code-lang">디렉터리 구조</span>
+              <span class="code-label">.claude/</span>
+            </div>
+            <pre>.claude/
+├── mcp.json                        <span class="cm"># Playwright MCP 서버 등록</span>
+└── skills/
+    └── gen-playwright-scenario.md  <span class="cm"># 시나리오 자동 생성 스킬</span></pre>
+          </div>
+          <div class="tip-box info" style="margin-top:12px;">
+            <span class="tip-icon">📝</span>
+            <div class="tip-content">
+              <strong>스킬 파일 구성</strong>
+              스킬 파일(.md)에는 Claude Code가 따라야 할 지시 사항을 마크다운으로 작성합니다.
+              어떤 파일을 분석하고, 어떤 형식으로 TC를 생성할지 등의 프롬프트를 정의합니다.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== 3. 프로젝트 구조 ===================== -->
+<section class="section" id="structure">
+  <div class="container">
+    <div class="section-tag">STRUCTURE</div>
+    <div class="section-title">테스트 프로젝트 구조 및 설계</div>
+    <div class="section-sub">화면, Mock API, 테스트 파일의 역할과 관계입니다.</div>
+
+    <!-- 아키텍처 다이어그램 -->
+    <div class="arch-diagram">
+      <div class="arch-layer">
+        <div class="arch-layer-title">🎭 테스트 레이어 (Playwright)</div>
+        <div class="arch-boxes">
+          <div class="arch-box blue">login.spec.js</div>
+          <div class="arch-box blue">sscm0100.spec.js</div>
+          <div class="arch-box teal">helpers/auth.js</div>
+        </div>
+      </div>
+      <div class="arch-arrow">↕</div>
+      <div class="arch-layer">
+        <div class="arch-layer-title">🖥️ 웹 화면 레이어</div>
+        <div class="arch-boxes">
+          <div class="arch-box navy">LoginView</div>
+          <div class="arch-box navy">Sscm0100View</div>
+          <div class="arch-box navy">MainLayout</div>
+        </div>
+      </div>
+      <div class="arch-arrow">↕</div>
+      <div class="arch-layer">
+        <div class="arch-layer-title">🗄️ 데이터 레이어 (Mock API + Store)</div>
+        <div class="arch-boxes">
+          <div class="arch-box green">mockApi.js</div>
+          <div class="arch-box green">stores/auth.js</div>
+          <div class="arch-box green">stores/toast.js</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="data-table-wrap" style="margin-top:20px;">
+      <table>
+        <thead>
+          <tr>
+            <th>패턴</th>
+            <th>예시</th>
+            <th>설명</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td><code>page-{화면ID}</code></td><td><code>page-sscm0100</code></td><td>화면 최상위 래퍼, beforeEach 대기에 사용</td></tr>
+          <tr><td><code>search-area</code></td><td><code>search-area</code></td><td>조회 조건 영역</td></tr>
+          <tr><td><code>btn-{동작}</code></td><td><code>btn-search</code>, <code>btn-add-010</code></td><td>동작 버튼</td></tr>
+          <tr><td><code>grid-{ID}-wrap</code></td><td><code>grid-csys010-wrap</code></td><td>그리드 컨테이너</td></tr>
+          <tr><td><code>row-{그리드}-{idx}</code></td><td><code>row-010-0</code></td><td>그리드 행</td></tr>
+          <tr><td><code>cell-{그리드}-{컬럼}-{idx}</code></td><td><code>cell-010-cmmnCd-0</code></td><td>편집 가능한 셀 입력 필드</td></tr>
+          <tr><td><code>input-{필드}</code></td><td><code>input-login-id</code></td><td>폼 입력 필드</td></tr>
+          <tr><td><code>modal-confirm</code></td><td><code>modal-confirm</code></td><td>확인 다이얼로그</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== 4. Playwright MCP ===================== -->
+<section class="section" id="mcp">
+  <div class="container">
+    <div class="section-tag">MCP</div>
+    <div class="section-title">Playwright MCP 활용법</div>
+    <div class="section-sub">Claude Code에서 자연어로 브라우저를 직접 조작할 수 있습니다.</div>
+
+    <div class="process-flow">
+      <div class="process-step">
+        <div class="process-step-icon">💬</div>
+        <div class="process-step-title">자연어 지시</div>
+        <div class="process-step-desc">Claude에게 테스트 동작 요청</div>
+      </div>
+      <div class="process-step">
+        <div class="process-step-icon">🤖</div>
+        <div class="process-step-title">MCP 호출</div>
+        <div class="process-step-desc">Playwright MCP 도구 실행</div>
+      </div>
+      <div class="process-step">
+        <div class="process-step-icon">🌐</div>
+        <div class="process-step-title">브라우저 조작</div>
+        <div class="process-step-desc">실제 브라우저에서 동작 수행</div>
+      </div>
+      <div class="process-step">
+        <div class="process-step-icon">📊</div>
+        <div class="process-step-title">결과 분석</div>
+        <div class="process-step-desc">스크린샷 + 결과 반환</div>
+      </div>
+    </div>
+
+    <h3 style="font-size:16px; font-weight:700; margin-bottom:12px; color:var(--navy);">MCP로 할 수 있는 것들</h3>
+
+    <div class="card-grid">
+      <div class="card">
+        <span class="card-icon">🔍</span>
+        <div class="card-title">브라우저 탐색 · 스크린샷</div>
+        <div class="card-desc">"로그인하고 sscm0100 화면을 열어줘"라고 지시하면 실제 브라우저에서 수행 후 스크린샷을 반환합니다.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">✏️</span>
+        <div class="card-title">selector 실시간 검증</div>
+        <div class="card-desc">작성한 data-testid가 실제로 동작하는지 MCP로 즉시 확인합니다. 코드를 실행하기 전에 선택자를 검증할 수 있습니다.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🐛</span>
+        <div class="card-title">실시간 디버깅</div>
+        <div class="card-desc">테스트 실패 시 브라우저 상태를 MCP로 확인하여 문제 원인을 즉시 파악하고 수정합니다.</div>
+      </div>
+    </div>
+
+    <div class="code-wrap" style="margin-top:24px;">
+      <div class="code-header">
+        <span class="code-lang">대화 예시</span>
+        <span class="code-label">Claude Code + Playwright MCP</span>
+      </div>
+      <pre><span class="cm">👤 사용자:</span>
+<span class="str">"admin 계정으로 로그인하고 sscm0100 화면을 열어서
+ 공통코드 조회 버튼을 클릭한 다음 결과를 확인해줘"</span>
+
+<span class="cm">🤖 Claude (MCP 도구 사용):</span>
+→ playwright_navigate: <span class="str">http://localhost:5173/login</span>
+→ playwright_fill: <span class="str">[data-testid="input-login-id"]</span> → <span class="str">"admin"</span>
+→ playwright_fill: <span class="str">[data-testid="input-login-pw"]</span> → <span class="str">"admin123"</span>
+→ playwright_click: <span class="str">[data-testid="btn-login"]</span>
+→ playwright_click: <span class="str">[data-testid="btn-search"]</span>
+→ playwright_screenshot: <span class="str">결과 스크린샷 반환</span>
+
+<span class="cm">✅ 결과: 8건의 공통코드가 조회되었습니다 (스크린샷 첨부)</span></pre>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== 5. 시나리오 자동 생성 ===================== -->
+<section class="section" id="skill">
+  <div class="container">
+    <div class="section-tag">AI SKILL</div>
+    <div class="section-title">/gen-playwright-scenario 커맨드</div>
+    <div class="section-sub">화면 소스를 분석해 Playwright 테스트 파일을 자동 생성하는 Claude Code 커스텀 커맨드입니다.</div>
+
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-body">
+          <div class="step-title">커맨드 실행</div>
+          <div class="step-desc">Claude Code 터미널에서 화면 ID를 인자로 슬래시 커맨드를 입력합니다.</div>
+          <div class="code-wrap">
+            <div class="code-header"><span class="code-lang">bash</span><span class="code-label">Claude Code 터미널</span></div>
+            <pre>/gen-playwright-scenario sscm0100</pre>
+          </div>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-body">
+          <div class="step-title">소스 자동 분석</div>
+          <div class="step-desc">Claude가 해당 View 파일에서 <code>data-testid</code>를 추출하고 화면 기능을 파악합니다.</div>
+          <div class="code-wrap">
+            <div class="code-header"><span class="code-lang">분석 결과</span><span class="code-label">자동 추출 예시</span></div>
+            <pre><span class="cm">📂 파일: src/views/Sscm0100View.vue</span>
+
+<span class="cm">🔍 발견된 data-testid 목록:</span>
+  page-sscm0100       → 화면 루트
+  search-area         → 조회 영역
+  btn-search          → 조회 버튼
+  grid-csys010-wrap   → 공통코드 그리드
+  grid-csys011-wrap   → 공통코드값 그리드
+  btn-add-010         → 공통코드 추가
+  btn-save-010        → 공통코드 저장
+  modal-confirm       → 확인 다이얼로그
+  ...
+
+<span class="op">✅ 총 32개 testid 발견 → 시나리오 설계 시작</span></pre>
+          </div>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-body">
+          <div class="step-title">TC 자동 생성</div>
+          <div class="step-desc">추출된 정보를 기반으로 표준 포맷의 Playwright 파일을 생성합니다.</div>
+          <div class="data-table-wrap">
+            <table>
+              <thead>
+                <tr><th>카테고리</th><th>TC 수</th><th>내용</th></tr>
+              </thead>
+              <tbody>
+                <tr><td>렌더링 확인</td><td>1~2</td><td>주요 영역 표시 여부 확인</td></tr>
+                <tr><td>조회 기능</td><td>3~5</td><td>기본조회, 조건필터, Enter키 조회</td></tr>
+                <tr><td>추가/저장</td><td>3~4</td><td>추가, 유효성 실패, 저장 성공</td></tr>
+                <tr><td>삭제</td><td>2~3</td><td>미선택 경고, 다이얼로그 취소/확인</td></tr>
+                <tr><td>예외 처리</td><td>1~2</td><td>변경 중 조회 경고, 빈 결과</td></tr>
+                <tr><td>인증/권한</td><td>1</td><td>비로그인 접근 시 리다이렉트</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== 6. 실행 방법 ===================== -->
+<section class="section" id="run">
+  <div class="container">
+    <div class="section-tag">EXECUTION</div>
+    <div class="section-title">실행 방법 &amp; 토큰 사용량</div>
+    <div class="section-sub">실행 방법에 따라 Claude Code 토큰 소비량이 크게 달라집니다. 목적에 맞는 방법을 선택하세요.</div>
+
+    <div class="card-grid">
+      <div class="card">
+        <span class="card-icon">🚀</span>
+        <div class="card-title">전체 테스트 실행</div>
+        <div style="display:flex; gap:6px; margin:8px 0;">
+          <span class="badge badge-green">Claude 관여 최소</span>
+        </div>
+        <div class="card-desc" style="margin-bottom:10px;">Claude는 명령어만 실행하고 결과 출력을 컨텍스트에 포함합니다. 결과 분석을 요청하지 않으면 토큰 소비가 매우 적습니다.</div>
+        <div class="code-wrap" style="margin-top:8px;">
+          <pre style="padding:10px 14px; font-size:12px;">npm test
+npx playwright test</pre>
+        </div>
+      </div>
+      <div class="card">
+        <span class="card-icon">👁️</span>
+        <div class="card-title">Headed 모드 (브라우저 표시)</div>
+        <div style="display:flex; gap:6px; margin:8px 0;">
+          <span class="badge badge-green">Claude 관여 최소</span>
+        </div>
+        <div class="card-desc" style="margin-bottom:10px;">브라우저 창을 열어 테스트가 실행되는 모습을 시각으로 확인합니다. 시연이나 디버깅에 적합합니다.</div>
+        <div class="code-wrap" style="margin-top:8px;">
+          <pre style="padding:10px 14px; font-size:12px;">npm run test:headed
+
+<span class="cm"># 느리게 실행 (시연용)</span>
+npx playwright test --headed --slow-mo 800</pre>
+        </div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🎛️</span>
+        <div class="card-title">UI 모드 (Playwright GUI)</div>
+        <div style="display:flex; gap:6px; margin:8px 0;">
+          <span class="badge badge-green">Claude 관여 없음</span>
+        </div>
+        <div class="card-desc" style="margin-bottom:10px;">Playwright가 제공하는 자체 GUI 앱을 별도로 열어 TC를 선택·실행합니다. Claude는 실행 명령어만 전달하므로 토큰을 거의 사용하지 않습니다.</div>
+        <div class="code-wrap" style="margin-top:8px;">
+          <pre style="padding:10px 14px; font-size:12px;">npm run test:ui</pre>
+        </div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🤖</span>
+        <div class="card-title">MCP 직접 조작 + 검증</div>
+        <div style="display:flex; gap:6px; margin:8px 0;">
+          <span class="badge badge-orange">Claude 관여 높음</span>
+        </div>
+        <div class="card-desc" style="margin-bottom:10px;">자연어로 Claude에게 지시하면 MCP를 통해 브라우저를 직접 조작하고 스크린샷을 반환합니다. 스크린샷 1장당 ~1,500–2,500 토큰이 소비됩니다.</div>
+        <div class="code-wrap" style="margin-top:8px;">
+          <pre style="padding:10px 14px; font-size:12px;"><span class="cm"># 자연어로 지시</span>
+<span class="str">"admin으로 로그인하고 조회 버튼 클릭 후 결과 확인해줘"</span></pre>
+        </div>
+      </div>
+      <div class="card">
+        <span class="card-icon">✨</span>
+        <div class="card-title">TC 자동 생성</div>
+        <div style="display:flex; gap:6px; margin:8px 0;">
+          <span class="badge" style="background:#fde68a;color:#92400e;">Claude 관여 최대</span>
+        </div>
+        <div class="card-desc" style="margin-bottom:10px;">화면 소스 전체를 읽고 data-testid를 추출한 뒤 TC 파일을 생성합니다. 파일 분석 + 출력 생성 비용이 가장 큽니다.</div>
+        <div class="code-wrap" style="margin-top:8px;">
+          <pre style="padding:10px 14px; font-size:12px;">/gen-playwright-scenario sscm0100</pre>
+        </div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🔍</span>
+        <div class="card-title">결과 분석 요청</div>
+        <div style="display:flex; gap:6px; margin:8px 0;">
+          <span class="badge badge-orange">Claude 관여 중간</span>
+        </div>
+        <div class="card-desc" style="margin-bottom:10px;">npm test 실행 후 Claude에게 "실패 원인 분석해줘"를 요청하면 터미널 출력 + 코드 리딩이 추가되어 토큰이 늘어납니다.</div>
+        <div class="code-wrap" style="margin-top:8px;">
+          <pre style="padding:10px 14px; font-size:12px;">npm test
+<span class="cm"># 이후 Claude에게 결과 분석 요청</span></pre>
+        </div>
+      </div>
+    </div>
+
+    <!-- 토큰 사용량 비교표 -->
+    <div style="margin-top:40px;">
+      <h3 style="font-size:17px; font-weight:700; color:var(--navy); margin-bottom:6px;">토큰 사용량 비교</h3>
+      <p style="font-size:13px; color:var(--gray-4); margin-bottom:16px;">
+        아래 수치는 실측 기반 추정치입니다 (5시간 세션 기준 · Pro ≈ 100K 토큰 / Max 5× ≈ 500K 토큰).
+        스크린샷·컨텍스트 크기에 따라 ±30% 내외 편차가 발생합니다.
+      </p>
+
+      <div class="data-table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>실행 방법</th>
+              <th>Claude 관여</th>
+              <th>예상 토큰<br><span style="font-weight:400;font-size:11px;">(입력 + 출력)</span></th>
+              <th>Pro 소비율<br><span style="font-weight:400;font-size:11px;">(5h 세션 기준)</span></th>
+              <th>Max 5× 소비율<br><span style="font-weight:400;font-size:11px;">(5h 세션 기준)</span></th>
+              <th>권장 상황</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>npm run test:ui</strong></td>
+              <td><span class="badge badge-green">없음</span></td>
+              <td>~500 – 1,000</td>
+              <td>
+                <div style="display:flex;align-items:center;gap:6px;">
+                  <div style="flex:1;height:8px;background:#e8edf5;border-radius:4px;overflow:hidden;">
+                    <div style="width:1%;height:100%;background:#22a06b;border-radius:4px;"></div>
+                  </div>
+                  <span style="font-size:12px;font-weight:700;color:#22a06b;">&lt;1%</span>
+                </div>
+              </td>
+              <td>
+                <div style="display:flex;align-items:center;gap:6px;">
+                  <div style="flex:1;height:8px;background:#e8edf5;border-radius:4px;overflow:hidden;">
+                    <div style="width:0.2%;height:100%;background:#22a06b;border-radius:4px;"></div>
+                  </div>
+                  <span style="font-size:12px;font-weight:700;color:#22a06b;">&lt;0.2%</span>
+                </div>
+              </td>
+              <td style="font-size:12px;">TC 선택·실행 직접 제어 시</td>
+            </tr>
+            <tr>
+              <td><strong>npm test</strong> (단순 실행)</td>
+              <td><span class="badge badge-green">최소</span></td>
+              <td>~3,000 – 5,000</td>
+              <td>
+                <div style="display:flex;align-items:center;gap:6px;">
+                  <div style="flex:1;height:8px;background:#e8edf5;border-radius:4px;overflow:hidden;">
+                    <div style="width:4%;height:100%;background:#22a06b;border-radius:4px;"></div>
+                  </div>
+                  <span style="font-size:12px;font-weight:700;color:#22a06b;">3 – 5%</span>
+                </div>
+              </td>
+              <td>
+                <div style="display:flex;align-items:center;gap:6px;">
+                  <div style="flex:1;height:8px;background:#e8edf5;border-radius:4px;overflow:hidden;">
+                    <div style="width:1%;height:100%;background:#22a06b;border-radius:4px;"></div>
+                  </div>
+                  <span style="font-size:12px;font-weight:700;color:#22a06b;">0.6 – 1%</span>
+                </div>
+              </td>
+              <td style="font-size:12px;">CI 배포 전 전체 회귀 테스트</td>
+            </tr>
+            <tr>
+              <td><strong>npm run test:headed</strong></td>
+              <td><span class="badge badge-green">최소</span></td>
+              <td>~3,000 – 5,000</td>
+              <td>
+                <div style="display:flex;align-items:center;gap:6px;">
+                  <div style="flex:1;height:8px;background:#e8edf5;border-radius:4px;overflow:hidden;">
+                    <div style="width:4%;height:100%;background:#22a06b;border-radius:4px;"></div>
+                  </div>
+                  <span style="font-size:12px;font-weight:700;color:#22a06b;">3 – 5%</span>
+                </div>
+              </td>
+              <td>
+                <div style="display:flex;align-items:center;gap:6px;">
+                  <div style="flex:1;height:8px;background:#e8edf5;border-radius:4px;overflow:hidden;">
+                    <div style="width:1%;height:100%;background:#22a06b;border-radius:4px;"></div>
+                  </div>
+                  <span style="font-size:12px;font-weight:700;color:#22a06b;">0.6 – 1%</span>
+                </div>
+              </td>
+              <td style="font-size:12px;">시연·데모, 눈으로 확인</td>
+            </tr>
+            <tr>
+              <td><strong>npm test + 결과 분석</strong></td>
+              <td><span class="badge badge-orange">중간</span></td>
+              <td>~8,000 – 15,000</td>
+              <td>
+                <div style="display:flex;align-items:center;gap:6px;">
+                  <div style="flex:1;height:8px;background:#e8edf5;border-radius:4px;overflow:hidden;">
+                    <div style="width:12%;height:100%;background:#e2922b;border-radius:4px;"></div>
+                  </div>
+                  <span style="font-size:12px;font-weight:700;color:#e2922b;">8 – 15%</span>
+                </div>
+              </td>
+              <td>
+                <div style="display:flex;align-items:center;gap:6px;">
+                  <div style="flex:1;height:8px;background:#e8edf5;border-radius:4px;overflow:hidden;">
+                    <div style="width:2.5%;height:100%;background:#e2922b;border-radius:4px;"></div>
+                  </div>
+                  <span style="font-size:12px;font-weight:700;color:#e2922b;">1.6 – 3%</span>
+                </div>
+              </td>
+              <td style="font-size:12px;">실패 원인 파악·수정 요청</td>
+            </tr>
+            <tr>
+              <td><strong>MCP 단일 시나리오</strong><br><span style="font-size:11px;color:var(--gray-4);">스크린샷 1–2장 포함</span></td>
+              <td><span class="badge badge-orange">높음</span></td>
+              <td>~8,000 – 12,000</td>
+              <td>
+                <div style="display:flex;align-items:center;gap:6px;">
+                  <div style="flex:1;height:8px;background:#e8edf5;border-radius:4px;overflow:hidden;">
+                    <div style="width:10%;height:100%;background:#e2922b;border-radius:4px;"></div>
+                  </div>
+                  <span style="font-size:12px;font-weight:700;color:#e2922b;">8 – 12%</span>
+                </div>
+              </td>
+              <td>
+                <div style="display:flex;align-items:center;gap:6px;">
+                  <div style="flex:1;height:8px;background:#e8edf5;border-radius:4px;overflow:hidden;">
+                    <div style="width:2%;height:100%;background:#e2922b;border-radius:4px;"></div>
+                  </div>
+                  <span style="font-size:12px;font-weight:700;color:#e2922b;">1.6 – 2.4%</span>
+                </div>
+              </td>
+              <td style="font-size:12px;">selector 검증, 빠른 동작 확인</td>
+            </tr>
+            <tr>
+              <td><strong>MCP 복합 시나리오</strong><br><span style="font-size:11px;color:var(--gray-4);">스크린샷 3–5장 포함</span></td>
+              <td><span class="badge" style="background:#fee2e2;color:#991b1b;">매우 높음</span></td>
+              <td>~15,000 – 25,000</td>
+              <td>
+                <div style="display:flex;align-items:center;gap:6px;">
+                  <div style="flex:1;height:8px;background:#e8edf5;border-radius:4px;overflow:hidden;">
+                    <div style="width:20%;height:100%;background:#d84040;border-radius:4px;"></div>
+                  </div>
+                  <span style="font-size:12px;font-weight:700;color:#d84040;">15 – 25%</span>
+                </div>
+              </td>
+              <td>
+                <div style="display:flex;align-items:center;gap:6px;">
+                  <div style="flex:1;height:8px;background:#e8edf5;border-radius:4px;overflow:hidden;">
+                    <div style="width:4%;height:100%;background:#d84040;border-radius:4px;"></div>
+                  </div>
+                  <span style="font-size:12px;font-weight:700;color:#d84040;">3 – 5%</span>
+                </div>
+              </td>
+              <td style="font-size:12px;">전체 흐름 검증, 시연</td>
+            </tr>
+            <tr>
+              <td><strong>/gen-playwright-scenario</strong><br><span style="font-size:11px;color:var(--gray-4);">소스 분석 + TC 파일 생성</span></td>
+              <td><span class="badge" style="background:#fee2e2;color:#991b1b;">최대</span></td>
+              <td>~20,000 – 30,000</td>
+              <td>
+                <div style="display:flex;align-items:center;gap:6px;">
+                  <div style="flex:1;height:8px;background:#e8edf5;border-radius:4px;overflow:hidden;">
+                    <div style="width:25%;height:100%;background:#d84040;border-radius:4px;"></div>
+                  </div>
+                  <span style="font-size:12px;font-weight:700;color:#d84040;">20 – 30%</span>
+                </div>
+              </td>
+              <td>
+                <div style="display:flex;align-items:center;gap:6px;">
+                  <div style="flex:1;height:8px;background:#e8edf5;border-radius:4px;overflow:hidden;">
+                    <div style="width:5%;height:100%;background:#d84040;border-radius:4px;"></div>
+                  </div>
+                  <span style="font-size:12px;font-weight:700;color:#d84040;">4 – 6%</span>
+                </div>
+              </td>
+              <td style="font-size:12px;">신규 화면 TC 최초 생성 시</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="tip-box warning" style="margin-top:16px;">
+        <span class="tip-icon">⚠️</span>
+        <div class="tip-content">
+          <strong>스크린샷이 토큰의 주범</strong>
+          MCP를 통한 스크린샷(1280×720) 1장은 약 <strong>1,500–2,500 토큰</strong>을 소비합니다.
+          MCP 복합 시나리오에서 토큰이 급증하는 주요 원인입니다.
+          필요한 시점에만 스크린샷을 요청하거나, 검증이 끝난 후에는 <code>npm test</code>로 전환하세요.
+        </div>
+      </div>
+
+      <div class="tip-box info" style="margin-top:12px;">
+        <span class="tip-icon">💡</span>
+        <div class="tip-content">
+          <strong>Pro vs Max 선택 기준</strong>
+          MCP 직접 조작이나 /gen-playwright-scenario를 하루 5회 이상 사용하면 Pro(~100K/5h)의
+          한계에 근접합니다. 개발 중 반복 검증이 많다면 <strong>Max 5×</strong>가 유리합니다.
+          단순 <code>npm test</code> 위주라면 Pro로 충분합니다.
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== 8. 결과 분석 ===================== -->
+<section class="section" id="report">
+  <div class="container">
+    <div class="section-tag">REPORT</div>
+    <div class="section-title">테스트 결과 분석</div>
+    <div class="section-sub">HTML 리포트로 TC별 성공/실패 현황을 확인합니다.</div>
+
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-body">
+          <div class="step-title">HTML 리포트 열기</div>
+          <div class="code-wrap">
+            <div class="code-header"><span class="code-lang">bash</span></div>
+            <pre><span class="cm"># 리포트 생성 후 브라우저로 열기</span>
+npm run test:report
+
+<span class="cm"># 또는</span>
+npx playwright show-report playwright-report</pre>
+          </div>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-body">
+          <div class="step-title">실패 TC 분석</div>
+          <div class="step-desc">실패한 TC를 클릭하면 다음 정보를 확인할 수 있습니다.</div>
+          <div class="data-table-wrap" style="margin-top:12px;">
+            <table>
+              <thead><tr><th>정보</th><th>내용</th></tr></thead>
+              <tbody>
+                <tr><td>📸 스크린샷</td><td>실패 시점의 브라우저 화면 캡처</td></tr>
+                <tr><td>📹 비디오</td><td>테스트 전체 실행 영상 (on-first-retry)</td></tr>
+                <tr><td>🔍 Trace</td><td>DOM 상태, 네트워크, 콘솔 로그 전체 기록</td></tr>
+                <tr><td>📝 스텝 로그</td><td>각 동작의 성공/실패 및 소요 시간</td></tr>
+                <tr><td>🌐 Error</td><td>assertion 실패 메시지 (예상값 vs 실제값)</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-body">
+          <div class="step-title">Trace Viewer 활용</div>
+          <div class="code-wrap">
+            <div class="code-header"><span class="code-lang">bash</span></div>
+            <pre><span class="cm"># 특정 실패 TC의 trace 파일 직접 열기</span>
+npx playwright show-trace playwright-report/data/xxxxx.zip</pre>
+          </div>
+          <div class="tip-box info" style="margin-top:12px;">
+            <span class="tip-icon">🔍</span>
+            <div class="tip-content">
+              <strong>Trace Viewer란?</strong>
+              타임라인 슬라이더로 각 동작 시점의 DOM 스냅샷, 네트워크 요청,
+              콘솔 로그를 모두 확인할 수 있는 디버깅 도구입니다.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== 9. 전체 프로세스 ===================== -->
+<section class="section" id="best">
+  <div class="container">
+    <div class="section-tag">WORKFLOW</div>
+    <div class="section-title">Claude Code + Playwright 전체 프로세스</div>
+    <div class="section-sub">개발부터 검증까지, Claude Code와 Playwright MCP로 자동화된 워크플로우입니다.</div>
+
+    <div style="background: linear-gradient(135deg, #1a2744, #1a6fd4); border-radius: 16px; padding: 36px; color: white;">
+      <div style="display:grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap:16px;">
+        <div style="background:rgba(255,255,255,0.1); border-radius:10px; padding:16px; border:1px solid rgba(255,255,255,0.15);">
+          <div style="font-size:24px; margin-bottom:8px;">1️⃣</div>
+          <div style="font-weight:700; margin-bottom:4px;">화면 개발</div>
+          <div style="font-size:12px; opacity:.75;">data-testid 속성을 함께 작성하며 화면 구현</div>
+        </div>
+        <div style="background:rgba(255,255,255,0.1); border-radius:10px; padding:16px; border:1px solid rgba(255,255,255,0.15);">
+          <div style="font-size:24px; margin-bottom:8px;">2️⃣</div>
+          <div style="font-weight:700; margin-bottom:4px;">MCP로 즉시 검증</div>
+          <div style="font-size:12px; opacity:.75;">자연어로 브라우저 조작, selector 실시간 확인</div>
+        </div>
+        <div style="background:rgba(255,255,255,0.1); border-radius:10px; padding:16px; border:1px solid rgba(255,255,255,0.15);">
+          <div style="font-size:24px; margin-bottom:8px;">3️⃣</div>
+          <div style="font-weight:700; margin-bottom:4px;">시나리오 자동 생성</div>
+          <div style="font-size:12px; opacity:.75;">/gen-playwright-scenario로 TC 파일 자동 생성</div>
+        </div>
+        <div style="background:rgba(255,255,255,0.1); border-radius:10px; padding:16px; border:1px solid rgba(255,255,255,0.15);">
+          <div style="font-size:24px; margin-bottom:8px;">4️⃣</div>
+          <div style="font-weight:700; margin-bottom:4px;">전체 테스트 실행</div>
+          <div style="font-size:12px; opacity:.75;">npm test 로 전체 TC 실행 및 결과 확인</div>
+        </div>
+        <div style="background:rgba(255,255,255,0.1); border-radius:10px; padding:16px; border:1px solid rgba(255,255,255,0.15);">
+          <div style="font-size:24px; margin-bottom:8px;">5️⃣</div>
+          <div style="font-weight:700; margin-bottom:4px;">리포트 분석</div>
+          <div style="font-size:12px; opacity:.75;">HTML 리포트로 결과 확인, 실패 시 Trace 분석</div>
+        </div>
+        <div style="background:rgba(255,255,255,0.1); border-radius:10px; padding:16px; border:1px solid rgba(255,255,255,0.15);">
+          <div style="font-size:24px; margin-bottom:8px;">6️⃣</div>
+          <div style="font-weight:700; margin-bottom:4px;">반복 자동화</div>
+          <div style="font-size:12px; opacity:.75;">코드 변경 시마다 동일한 프로세스 반복 실행</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== 보완 설명 ===================== -->
+<section class="section" style="background: white;">
+  <div class="container">
+    <div class="section-tag">IMPORTANT</div>
+    <div class="section-title">시나리오 생성 이후엔 토큰 0원</div>
+    <div class="section-sub">Claude는 "만들 때"만 필요합니다. "실행할 때"는 완전히 독립적으로 동작합니다.</div>
+
+    <div class="tip-box success">
+      <span class="tip-icon">✅</span>
+      <div class="tip-content">
+        <strong>네, 맞습니다 — npm test는 Claude와 무관합니다</strong>
+        한 번 생성된 <code>.spec.js</code> 파일은 순수한 JavaScript 코드입니다.
+        이후 <code>npm test</code>는 Node.js + Playwright 엔진이 단독으로 실행하며,
+        Claude API 호출이 전혀 없습니다. <strong>토큰 소비 없이 무한정 반복 실행이 가능합니다.</strong>
+      </div>
+    </div>
+
+    <div class="compare-grid" style="margin-top:24px;">
+      <div class="compare-item">
+        <div class="compare-item-header red">🤖 Claude가 필요한 순간</div>
+        <div class="compare-item-body">
+          <ul style="list-style:disc; padding-left:18px; line-height:2.2;">
+            <li><code>/gen-playwright-scenario</code> — TC 최초 생성</li>
+            <li>MCP 브라우저 직접 조작·검증</li>
+            <li>실패 원인 분석 요청</li>
+            <li>기존 TC 수정·추가 요청</li>
+          </ul>
+          <div style="margin-top:10px; font-size:12px; color:var(--gray-4);">→ 화면당 1~2회 정도 발생하는 <strong>초기 투자</strong></div>
+        </div>
+      </div>
+      <div class="compare-item">
+        <div class="compare-item-header green">⚡ Claude 없이 무한 실행</div>
+        <div class="compare-item-body">
+          <ul style="list-style:disc; padding-left:18px; line-height:2.2;">
+            <li><code>npm test</code> — 전체 회귀 테스트</li>
+            <li><code>npm run test:headed</code> — 브라우저 확인</li>
+            <li><code>npm run test:ui</code> — GUI 디버깅</li>
+            <li>CI/CD 파이프라인 자동 실행</li>
+          </ul>
+          <div style="margin-top:10px; font-size:12px; color:var(--gray-4);">→ 배포 전마다, PR마다, 매일 밤마다 <strong>비용 없이 실행</strong></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="tip-box info" style="margin-top:20px;">
+      <span class="tip-icon">💡</span>
+      <div class="tip-content">
+        <strong>한 번 투자, 무한 회수</strong>
+        Claude로 시나리오를 생성하는 데 쓰는 토큰은 <strong>일회성 비용</strong>입니다.
+        이후 코드 변경이 없다면 동일한 TC가 CI 파이프라인에서 하루에 몇 번이든 실행돼도
+        추가 비용은 0원입니다. 화면이 변경되거나 TC를 새로 추가할 때만 Claude를 다시 쓰면 됩니다.
+      </div>
+    </div>
+
+    <!-- 라이프사이클 시각화 -->
+    <div style="margin-top:28px;">
+      <div class="process-flow">
+        <div class="process-step" style="background:#eff6ff;">
+          <div class="process-step-icon">🤖</div>
+          <div class="process-step-title" style="color:var(--blue);">TC 생성</div>
+          <div class="process-step-desc">Claude 사용<br><strong style="color:var(--blue);">토큰 소비 1회</strong></div>
+        </div>
+        <div class="process-step">
+          <div class="process-step-icon">✅</div>
+          <div class="process-step-title">npm test</div>
+          <div class="process-step-desc">Claude 불필요<br><strong style="color:var(--green);">토큰 0</strong></div>
+        </div>
+        <div class="process-step">
+          <div class="process-step-icon">✅</div>
+          <div class="process-step-title">CI 자동 실행</div>
+          <div class="process-step-desc">Claude 불필요<br><strong style="color:var(--green);">토큰 0</strong></div>
+        </div>
+        <div class="process-step">
+          <div class="process-step-icon">✅</div>
+          <div class="process-step-title">매일 반복</div>
+          <div class="process-step-desc">Claude 불필요<br><strong style="color:var(--green);">토큰 0</strong></div>
+        </div>
+        <div class="process-step" style="background:#eff6ff;">
+          <div class="process-step-icon">🤖</div>
+          <div class="process-step-title" style="color:var(--blue);">화면 변경 시</div>
+          <div class="process-step-desc">Claude 재사용<br><strong style="color:var(--blue);">토큰 소비 1회</strong></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== 푸터 ===================== -->
+<footer style="background: var(--navy); color: rgba(255,255,255,0.5); padding: 24px 0; text-align: center; font-size: 13px;">
+  <div class="container">
+    <p>🤖 Claude Code × Playwright MCP — TechByte &nbsp;·&nbsp; tech-byte-playwright &nbsp;·&nbsp; 2026-05-27</p>
+    <p style="margin-top:6px; font-size:12px;">Playwright + Claude Code + Playwright MCP</p>
+  </div>
+</footer>
+
+<script>
+// 현재 섹션 강조
+const navLinks = document.querySelectorAll('.toc-nav a')
+const sections = document.querySelectorAll('.section[id]')
+function highlightNav() {
+  let current = ''
+  sections.forEach(s => {
+    if (window.scrollY >= s.offsetTop - 80) current = s.id
+  })
+  navLinks.forEach(a => {
+    a.style.color = a.getAttribute('href') === '#' + current ? 'var(--blue)' : ''
+    a.style.borderBottomColor = a.getAttribute('href') === '#' + current ? 'var(--blue)' : ''
+  })
+}
+window.addEventListener('scroll', highlightNav, { passive: true })
+highlightNav()
+</script>
+</body>
+</html>
