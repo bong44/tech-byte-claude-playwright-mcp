@@ -343,7 +343,7 @@ tr:hover td { background: #f8faff; }
       <li><a href="#structure">3. 프로젝트 구조</a></li>
       <li><a href="#mcp">4. Playwright MCP</a></li>
       <li><a href="#skill">5. 시나리오 자동 생성</a></li>
-      <li><a href="#run">6. 실행 방법 &amp; 토큰 사용량</a></li>
+      <li><a href="#run">6. 실행 방법</a></li>
       <li><a href="#report">7. 결과 분석</a></li>
       <li><a href="#best">8. 전체 프로세스</a></li>
     </ul>
@@ -353,47 +353,46 @@ tr:hover td { background: #f8faff; }
 <!-- ===================== 1. 개요 ===================== -->
 <section class="section" id="overview">
   <div class="container">
-    <div class="section-tag">OVERVIEW</div>
-    <div class="section-title">Playwright 핵심 기능</div>
-    <div class="section-sub">이 프로젝트에서 실제로 활용되는 Playwright의 기능들입니다.</div>
-
+    <div class="section-tag">FRAMEWORK</div>
+    <div class="section-title">Playwright MCP 기반 개발 프레임워크</div>
+    <div class="section-sub">Claude Code + Playwright MCP로 구성한 TDD 기반 개발 프레임워크입니다.<br>화면 설계부터 TC 자동 생성·실시간 검증·회귀 테스트까지 하나의 사이클로 연결됩니다.</div>
 
     <div class="card-grid">
       <div class="card">
-        <span class="card-icon">🔄</span>
-        <div class="card-title">자동 대기 (Auto-Wait)</div>
-        <div class="card-desc">클릭·입력 등 모든 동작에서 요소가 준비될 때까지 자동으로 대기합니다. 불필요한 sleep() 없이 안정적인 테스트를 작성할 수 있습니다.</div>
+        <span class="card-icon">🎯</span>
+        <div class="card-title">TDD 개발 사이클</div>
+        <div class="card-desc">data-testid 설계 → TC 자동 생성 → MCP 실시간 검증 → 회귀 테스트의 반복 사이클로 화면 개발과 테스트를 동시에 진행합니다.</div>
       </div>
       <div class="card">
-        <span class="card-icon">📸</span>
-        <div class="card-title">스크린샷 / 비디오 녹화</div>
-        <div class="card-desc">테스트 실패 시 자동으로 스크린샷과 실행 영상을 저장합니다. Claude Code가 이 결과를 읽어 즉시 원인을 파악합니다.</div>
-      </div>
-      <div class="card">
-        <span class="card-icon">🧩</span>
-        <div class="card-title">MCP 통합</div>
-        <div class="card-desc">Playwright MCP를 통해 Claude Code가 브라우저를 직접 조작하고 테스트 시나리오를 실시간으로 생성·검증할 수 있습니다.</div>
-      </div>
-      <div class="card">
-        <span class="card-icon">📊</span>
-        <div class="card-title">HTML 리포트</div>
-        <div class="card-desc">직관적인 HTML 리포트로 각 TC의 성공/실패 현황, 실행 시간, 스텝 상세 내역을 한눈에 확인합니다.</div>
+        <span class="card-icon">🔌</span>
+        <div class="card-title">MCP 실시간 브라우저 제어</div>
+        <div class="card-desc">Claude Code에서 자연어 지시만으로 브라우저를 직접 조작하고 selector를 즉시 검증합니다. 코드를 실행하기 전에 동작을 확인할 수 있습니다.</div>
       </div>
       <div class="card">
         <span class="card-icon">🤖</span>
-        <div class="card-title">AI 시나리오 자동 생성</div>
-        <div class="card-desc">Claude Code의 /gen-playwright-scenario 커맨드로 화면 소스를 분석해 TC 파일을 자동으로 생성합니다.</div>
+        <div class="card-title">AI 기반 TC 자동 생성</div>
+        <div class="card-desc">/gen-playwright-scenario 커맨드로 화면 소스의 data-testid를 분석해 표준 포맷의 TC 파일을 자동으로 생성합니다.</div>
       </div>
       <div class="card">
-        <span class="card-icon">⚡</span>
-        <div class="card-title">빠른 실행 · 병렬 처리</div>
-        <div class="card-desc">Chromium 기반의 네이티브 브라우저 제어로 빠른 실행 속도를 제공하며, 여러 TC를 병렬로 실행할 수 있습니다.</div>
+        <span class="card-icon">♻️</span>
+        <div class="card-title">회귀 테스트 자동화</div>
+        <div class="card-desc">npm test 한 번으로 전체 TC를 병렬 실행합니다. 화면 수정 후 영향 범위를 즉시 확인할 수 있어 안정적인 배포가 가능합니다.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🏷️</span>
+        <div class="card-title">data-testid 설계 규칙</div>
+        <div class="card-desc">화면 구조 변경에 독립적인 selector 체계를 팀 전체가 일관된 규칙으로 작성합니다. 유지보수 비용을 최소화하는 핵심 설계 원칙입니다.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">📊</span>
+        <div class="card-title">결과 리포트 & 자동 문서화</div>
+        <div class="card-desc">TC별 성공/실패·실행 시간·스크린샷·트레이스가 HTML 리포트로 자동 저장됩니다. 별도 문서 없이 검증 이력이 누적됩니다.</div>
       </div>
     </div>
 
     <!-- 기존 vs Claude Code + Playwright MCP 비교 -->
     <div style="margin-top: 36px;">
-      <h3 style="font-size:17px; font-weight:700; color:var(--navy); margin-bottom:16px;">기존 방식 vs Claude Code + Playwright MCP</h3>
+      <h3 style="font-size:17px; font-weight:700; color:var(--navy); margin-bottom:16px;">기존 방식 vs Playwright MCP 기반 개발 프레임워크</h3>
       <div class="compare-grid">
         <div class="compare-item">
           <div class="compare-item-header red">❌ 기존 수동 개발·테스트</div>
@@ -408,14 +407,14 @@ tr:hover td { background: #f8faff; }
           </div>
         </div>
         <div class="compare-item">
-          <div class="compare-item-header green">✅ Claude Code + Playwright MCP</div>
+          <div class="compare-item-header green">✅ Playwright MCP 기반 개발 프레임워크</div>
           <div class="compare-item-body">
             <ul style="list-style:disc; padding-left:18px; line-height:2;">
-              <li>자연어로 브라우저 직접 조작·즉시 검증</li>
+              <li>data-testid 설계와 화면 개발을 동시에 진행</li>
               <li>/gen-playwright-scenario로 TC 자동 생성</li>
-              <li>실행마다 스크린샷·리포트 자동 저장</li>
-              <li>npm test 한 번으로 전체 회귀 테스트</li>
-              <li>MCP로 selector 실시간 확인 및 디버깅</li>
+              <li>MCP로 selector·동작을 코드 실행 전 즉시 검증</li>
+              <li>npm test 한 번으로 전체 회귀 테스트 자동 실행</li>
+              <li>스크린샷·트레이스·리포트 자동 저장으로 이력 관리</li>
             </ul>
           </div>
         </div>
@@ -502,9 +501,16 @@ npx playwright install chromium</pre>
           <div class="tip-box info" style="margin-top:12px;">
             <span class="tip-icon">📝</span>
             <div class="tip-content">
-              <strong>스킬 파일 구성</strong>
-              스킬 파일(.md)에는 Claude Code가 따라야 할 지시 사항을 마크다운으로 작성합니다.
-              어떤 파일을 분석하고, 어떤 형식으로 TC를 생성할지 등의 프롬프트를 정의합니다.
+              <strong>gen-playwright-scenario.md — 스킬 내용 요약</strong>
+              스킬 파일은 Claude Code가 커맨드 실행 시 따라야 할 절차를 마크다운으로 정의합니다. 이 스킬은 아래 순서로 동작합니다.
+              <ol style="margin-top:10px; padding-left:18px; line-height:2.1; font-size:13px;">
+                <li><strong>화면 정보 수집</strong> — 화면 ID · 라우트 · 뷰 파일 · 주요 기능 목록을 파악합니다.</li>
+                <li><strong>소스 자동 분석</strong> — <code>grep</code>으로 뷰 파일의 <code>data-testid</code>를 전부 추출합니다.</li>
+                <li><strong>TC 파일 생성</strong> — <code>tests/{화면ID}.spec.js</code>를 표준 템플릿으로 생성합니다. TC 번호는 <code>TC-{화면ID}-001</code> 체계를 따릅니다.</li>
+                <li><strong>카테고리별 시나리오 포함</strong> — 렌더링 · 조회 · 유효성 · CRUD · 예외 · 인증 총 6개 카테고리를 자동 작성합니다.</li>
+                <li><strong>helpers/auth.js 확인</strong> — 로그인 헬퍼가 없으면 함께 생성합니다.</li>
+                <li><strong>실행 가이드 안내</strong> — 생성 완료 후 실행 명령어를 터미널에 출력합니다.</li>
+              </ol>
             </div>
           </div>
         </div>
@@ -550,7 +556,39 @@ npx playwright install chromium</pre>
       </div>
     </div>
 
-    <div class="data-table-wrap" style="margin-top:20px;">
+    <h3 style="font-size:17px; font-weight:700; color:var(--navy); margin-top:28px; margin-bottom:12px;">data-testid 작성 규칙</h3>
+    <p style="font-size:13px; color:var(--gray-4); margin-bottom:16px;">Playwright 선택자가 화면 구조 변경에 영향받지 않도록 모든 요소에 <code>data-testid</code>를 부여합니다.</p>
+
+    <!-- data-testid 사용 효과 -->
+    <div style="display:grid; grid-template-columns:repeat(auto-fill,minmax(240px,1fr)); gap:12px; margin-bottom:20px;">
+      <div style="background:#eff6ff; border-left:4px solid var(--blue); border-radius:8px; padding:14px 16px;">
+        <div style="font-size:13px; font-weight:700; color:var(--navy); margin-bottom:6px;">🤖 AI 스킬 토큰 효율 증가</div>
+        <div style="font-size:12px; color:var(--gray-4); line-height:1.7;">
+          <code>/gen-playwright-scenario</code> 실행 시 Claude는 소스 전체를 읽는 대신
+          <code>grep data-testid</code> 한 번으로 화면 구조를 파악합니다.
+          일관된 네이밍 규칙이 있으면 추가 질의 없이 TC를 바로 생성하므로
+          입력 토큰이 줄고 생성 품질도 높아집니다.
+        </div>
+      </div>
+      <div style="background:#f0fdf4; border-left:4px solid var(--green); border-radius:8px; padding:14px 16px;">
+        <div style="font-size:13px; font-weight:700; color:var(--navy); margin-bottom:6px;">🏗️ 화면 구조 변경에 독립적인 TC</div>
+        <div style="font-size:12px; color:var(--gray-4); line-height:1.7;">
+          CSS 클래스·XPath 기반 선택자와 달리 <code>data-testid</code>는 마크업 구조가
+          바뀌어도 TC를 수정할 필요가 없습니다. 리팩터링·디자인 변경 후에도
+          기존 TC를 그대로 회귀 테스트에 재사용할 수 있습니다.
+        </div>
+      </div>
+<div style="background:#fef2f2; border-left:4px solid var(--red); border-radius:8px; padding:14px 16px;">
+        <div style="font-size:13px; font-weight:700; color:var(--navy); margin-bottom:6px;">🔍 실패 원인 즉시 특정</div>
+        <div style="font-size:12px; color:var(--gray-4); line-height:1.7;">
+          <code>btn-save-010</code>처럼 의미 있는 이름을 쓰면 TC 실패 로그만 봐도
+          어떤 컴포넌트에서 문제가 발생했는지 바로 파악됩니다.
+          MCP 디버깅 시 Claude도 selector 의미를 문맥 없이 이해할 수 있습니다.
+        </div>
+      </div>
+    </div>
+
+    <div class="data-table-wrap" style="margin-top:0;">
       <table>
         <thead>
           <tr>
@@ -570,6 +608,46 @@ npx playwright install chromium</pre>
           <tr><td><code>modal-confirm</code></td><td><code>modal-confirm</code></td><td>확인 다이얼로그</td></tr>
         </tbody>
       </table>
+    </div>
+
+    <div class="code-wrap" style="margin-top:20px;">
+      <div class="code-header">
+        <span class="code-lang">vue</span>
+        <span class="code-label">실제 적용 예시 — Sscm0100View.vue · LoginView.vue</span>
+      </div>
+      <pre><span class="cm">&lt;!-- ① 화면 최상위 래퍼 --&gt;</span>
+&lt;<span class="kw">div</span> class=<span class="str">"sscm0100"</span> <span class="op">data-testid=</span><span class="str">"page-sscm0100"</span>&gt;
+
+  <span class="cm">&lt;!-- ② 조회 조건 영역 --&gt;</span>
+  &lt;<span class="kw">div</span> class=<span class="str">"search-area"</span> <span class="op">data-testid=</span><span class="str">"search-area"</span>&gt;
+
+    <span class="cm">&lt;!-- ③ 폼 입력 필드 --&gt;</span>
+    &lt;<span class="kw">input</span> v-model=<span class="str">"cond.cmmnCdNm"</span> type=<span class="str">"text"</span> <span class="op">data-testid=</span><span class="str">"input-cmmn-cd-nm"</span> /&gt;
+    &lt;<span class="kw">select</span> v-model=<span class="str">"cond.useYn"</span>         <span class="op">data-testid=</span><span class="str">"sel-use-yn"</span>&gt;...&lt;/<span class="kw">select</span>&gt;
+
+    <span class="cm">&lt;!-- ④ 동작 버튼 --&gt;</span>
+    &lt;<span class="kw">button</span> @click=<span class="str">"handleSearch"</span> <span class="op">data-testid=</span><span class="str">"btn-search"</span>&gt;조회&lt;/<span class="kw">button</span>&gt;
+  &lt;/<span class="kw">div</span>&gt;
+
+  <span class="cm">&lt;!-- ⑤ 그리드 컨테이너 --&gt;</span>
+  &lt;<span class="kw">div</span> class=<span class="str">"grid-wrap"</span> <span class="op">data-testid=</span><span class="str">"grid-csys010-wrap"</span>&gt;
+    &lt;<span class="kw">button</span> @click=<span class="str">"handleAdd010"</span>  <span class="op">data-testid=</span><span class="str">"btn-add-010"</span>&gt;추가&lt;/<span class="kw">button</span>&gt;
+    &lt;<span class="kw">button</span> @click=<span class="str">"handleSave010"</span> <span class="op">data-testid=</span><span class="str">"btn-save-010"</span>&gt;저장&lt;/<span class="kw">button</span>&gt;
+
+    <span class="cm">&lt;!-- ⑥ 동적 행 · 셀 (v-for 인덱스 바인딩) --&gt;</span>
+    &lt;<span class="kw">tr</span>
+      v-for=<span class="str">"(row, idx) in codeList010"</span>
+      :<span class="op">data-testid</span>=<span class="str">`row-010-${idx}`</span>
+    &gt;
+      &lt;<span class="kw">input</span> type=<span class="str">"checkbox"</span>    :<span class="op">data-testid</span>=<span class="str">`chk-010-${idx}`</span> /&gt;
+      &lt;<span class="kw">input</span> v-model=<span class="str">"row.cmmnCd"</span> :<span class="op">data-testid</span>=<span class="str">`cell-010-cmmnCd-${idx}`</span> /&gt;
+    &lt;/<span class="kw">tr</span>&gt;
+  &lt;/<span class="kw">div</span>&gt;
+
+<span class="cm">&lt;!-- ⑦ 로그인 폼 입력 필드 (LoginView.vue) --&gt;</span>
+&lt;<span class="kw">input</span> type=<span class="str">"text"</span>     <span class="op">data-testid=</span><span class="str">"input-login-id"</span> /&gt;
+&lt;<span class="kw">input</span> type=<span class="str">"password"</span> <span class="op">data-testid=</span><span class="str">"input-login-pw"</span> /&gt;
+&lt;<span class="kw">button</span> type=<span class="str">"submit"</span>  <span class="op">data-testid=</span><span class="str">"btn-login"</span>&gt;로그인&lt;/<span class="kw">button</span>&gt;</pre>
     </div>
   </div>
 </section>
@@ -721,8 +799,8 @@ npx playwright install chromium</pre>
 <section class="section" id="run">
   <div class="container">
     <div class="section-tag">EXECUTION</div>
-    <div class="section-title">실행 방법 &amp; 토큰 사용량</div>
-    <div class="section-sub">실행 방법에 따라 Claude Code 토큰 소비량이 크게 달라집니다. 목적에 맞는 방법을 선택하세요.</div>
+    <div class="section-title">실행 방법</div>
+    <div class="section-sub">목적에 맞는 실행 방법을 선택하세요.</div>
 
     <div class="card-grid">
       <div class="card">
@@ -799,205 +877,6 @@ npx playwright test --headed --slow-mo 800</pre>
       </div>
     </div>
 
-    <!-- 토큰 사용량 비교표 -->
-    <div style="margin-top:40px;">
-      <h3 style="font-size:17px; font-weight:700; color:var(--navy); margin-bottom:6px;">토큰 사용량 비교</h3>
-      <p style="font-size:13px; color:var(--gray-4); margin-bottom:16px;">
-        아래 수치는 실측 기반 추정치입니다 (5시간 세션 기준 · Pro ≈ 100K 토큰 / Max 5× ≈ 500K 토큰).
-        스크린샷·컨텍스트 크기에 따라 ±30% 내외 편차가 발생합니다.
-      </p>
-
-      <div class="data-table-wrap">
-        <table>
-          <thead>
-            <tr>
-              <th>실행 방법</th>
-              <th>Claude 관여</th>
-              <th>예상 토큰<br><span style="font-weight:400;font-size:11px;">(입력 + 출력)</span></th>
-              <th>Pro 소비율<br><span style="font-weight:400;font-size:11px;">(5h 세션 기준)</span></th>
-              <th>Max 5× 소비율<br><span style="font-weight:400;font-size:11px;">(5h 세션 기준)</span></th>
-              <th>권장 상황</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td><strong>npm run test:ui</strong></td>
-              <td><span class="badge badge-green">없음</span></td>
-              <td>~500 – 1,000</td>
-              <td>
-                <div style="display:flex;align-items:center;gap:6px;">
-                  <div style="flex:1;height:8px;background:#e8edf5;border-radius:4px;overflow:hidden;">
-                    <div style="width:1%;height:100%;background:#22a06b;border-radius:4px;"></div>
-                  </div>
-                  <span style="font-size:12px;font-weight:700;color:#22a06b;">&lt;1%</span>
-                </div>
-              </td>
-              <td>
-                <div style="display:flex;align-items:center;gap:6px;">
-                  <div style="flex:1;height:8px;background:#e8edf5;border-radius:4px;overflow:hidden;">
-                    <div style="width:0.2%;height:100%;background:#22a06b;border-radius:4px;"></div>
-                  </div>
-                  <span style="font-size:12px;font-weight:700;color:#22a06b;">&lt;0.2%</span>
-                </div>
-              </td>
-              <td style="font-size:12px;">TC 선택·실행 직접 제어 시</td>
-            </tr>
-            <tr>
-              <td><strong>npm test</strong> (단순 실행)</td>
-              <td><span class="badge badge-green">최소</span></td>
-              <td>~3,000 – 5,000</td>
-              <td>
-                <div style="display:flex;align-items:center;gap:6px;">
-                  <div style="flex:1;height:8px;background:#e8edf5;border-radius:4px;overflow:hidden;">
-                    <div style="width:4%;height:100%;background:#22a06b;border-radius:4px;"></div>
-                  </div>
-                  <span style="font-size:12px;font-weight:700;color:#22a06b;">3 – 5%</span>
-                </div>
-              </td>
-              <td>
-                <div style="display:flex;align-items:center;gap:6px;">
-                  <div style="flex:1;height:8px;background:#e8edf5;border-radius:4px;overflow:hidden;">
-                    <div style="width:1%;height:100%;background:#22a06b;border-radius:4px;"></div>
-                  </div>
-                  <span style="font-size:12px;font-weight:700;color:#22a06b;">0.6 – 1%</span>
-                </div>
-              </td>
-              <td style="font-size:12px;">CI 배포 전 전체 회귀 테스트</td>
-            </tr>
-            <tr>
-              <td><strong>npm run test:headed</strong></td>
-              <td><span class="badge badge-green">최소</span></td>
-              <td>~3,000 – 5,000</td>
-              <td>
-                <div style="display:flex;align-items:center;gap:6px;">
-                  <div style="flex:1;height:8px;background:#e8edf5;border-radius:4px;overflow:hidden;">
-                    <div style="width:4%;height:100%;background:#22a06b;border-radius:4px;"></div>
-                  </div>
-                  <span style="font-size:12px;font-weight:700;color:#22a06b;">3 – 5%</span>
-                </div>
-              </td>
-              <td>
-                <div style="display:flex;align-items:center;gap:6px;">
-                  <div style="flex:1;height:8px;background:#e8edf5;border-radius:4px;overflow:hidden;">
-                    <div style="width:1%;height:100%;background:#22a06b;border-radius:4px;"></div>
-                  </div>
-                  <span style="font-size:12px;font-weight:700;color:#22a06b;">0.6 – 1%</span>
-                </div>
-              </td>
-              <td style="font-size:12px;">시연·데모, 눈으로 확인</td>
-            </tr>
-            <tr>
-              <td><strong>npm test + 결과 분석</strong></td>
-              <td><span class="badge badge-orange">중간</span></td>
-              <td>~8,000 – 15,000</td>
-              <td>
-                <div style="display:flex;align-items:center;gap:6px;">
-                  <div style="flex:1;height:8px;background:#e8edf5;border-radius:4px;overflow:hidden;">
-                    <div style="width:12%;height:100%;background:#e2922b;border-radius:4px;"></div>
-                  </div>
-                  <span style="font-size:12px;font-weight:700;color:#e2922b;">8 – 15%</span>
-                </div>
-              </td>
-              <td>
-                <div style="display:flex;align-items:center;gap:6px;">
-                  <div style="flex:1;height:8px;background:#e8edf5;border-radius:4px;overflow:hidden;">
-                    <div style="width:2.5%;height:100%;background:#e2922b;border-radius:4px;"></div>
-                  </div>
-                  <span style="font-size:12px;font-weight:700;color:#e2922b;">1.6 – 3%</span>
-                </div>
-              </td>
-              <td style="font-size:12px;">실패 원인 파악·수정 요청</td>
-            </tr>
-            <tr>
-              <td><strong>MCP 단일 시나리오</strong><br><span style="font-size:11px;color:var(--gray-4);">스크린샷 1–2장 포함</span></td>
-              <td><span class="badge badge-orange">높음</span></td>
-              <td>~8,000 – 12,000</td>
-              <td>
-                <div style="display:flex;align-items:center;gap:6px;">
-                  <div style="flex:1;height:8px;background:#e8edf5;border-radius:4px;overflow:hidden;">
-                    <div style="width:10%;height:100%;background:#e2922b;border-radius:4px;"></div>
-                  </div>
-                  <span style="font-size:12px;font-weight:700;color:#e2922b;">8 – 12%</span>
-                </div>
-              </td>
-              <td>
-                <div style="display:flex;align-items:center;gap:6px;">
-                  <div style="flex:1;height:8px;background:#e8edf5;border-radius:4px;overflow:hidden;">
-                    <div style="width:2%;height:100%;background:#e2922b;border-radius:4px;"></div>
-                  </div>
-                  <span style="font-size:12px;font-weight:700;color:#e2922b;">1.6 – 2.4%</span>
-                </div>
-              </td>
-              <td style="font-size:12px;">selector 검증, 빠른 동작 확인</td>
-            </tr>
-            <tr>
-              <td><strong>MCP 복합 시나리오</strong><br><span style="font-size:11px;color:var(--gray-4);">스크린샷 3–5장 포함</span></td>
-              <td><span class="badge" style="background:#fee2e2;color:#991b1b;">매우 높음</span></td>
-              <td>~15,000 – 25,000</td>
-              <td>
-                <div style="display:flex;align-items:center;gap:6px;">
-                  <div style="flex:1;height:8px;background:#e8edf5;border-radius:4px;overflow:hidden;">
-                    <div style="width:20%;height:100%;background:#d84040;border-radius:4px;"></div>
-                  </div>
-                  <span style="font-size:12px;font-weight:700;color:#d84040;">15 – 25%</span>
-                </div>
-              </td>
-              <td>
-                <div style="display:flex;align-items:center;gap:6px;">
-                  <div style="flex:1;height:8px;background:#e8edf5;border-radius:4px;overflow:hidden;">
-                    <div style="width:4%;height:100%;background:#d84040;border-radius:4px;"></div>
-                  </div>
-                  <span style="font-size:12px;font-weight:700;color:#d84040;">3 – 5%</span>
-                </div>
-              </td>
-              <td style="font-size:12px;">전체 흐름 검증, 시연</td>
-            </tr>
-            <tr>
-              <td><strong>/gen-playwright-scenario</strong><br><span style="font-size:11px;color:var(--gray-4);">소스 분석 + TC 파일 생성</span></td>
-              <td><span class="badge" style="background:#fee2e2;color:#991b1b;">최대</span></td>
-              <td>~20,000 – 30,000</td>
-              <td>
-                <div style="display:flex;align-items:center;gap:6px;">
-                  <div style="flex:1;height:8px;background:#e8edf5;border-radius:4px;overflow:hidden;">
-                    <div style="width:25%;height:100%;background:#d84040;border-radius:4px;"></div>
-                  </div>
-                  <span style="font-size:12px;font-weight:700;color:#d84040;">20 – 30%</span>
-                </div>
-              </td>
-              <td>
-                <div style="display:flex;align-items:center;gap:6px;">
-                  <div style="flex:1;height:8px;background:#e8edf5;border-radius:4px;overflow:hidden;">
-                    <div style="width:5%;height:100%;background:#d84040;border-radius:4px;"></div>
-                  </div>
-                  <span style="font-size:12px;font-weight:700;color:#d84040;">4 – 6%</span>
-                </div>
-              </td>
-              <td style="font-size:12px;">신규 화면 TC 최초 생성 시</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-
-      <div class="tip-box warning" style="margin-top:16px;">
-        <span class="tip-icon">⚠️</span>
-        <div class="tip-content">
-          <strong>스크린샷이 토큰의 주범</strong>
-          MCP를 통한 스크린샷(1280×720) 1장은 약 <strong>1,500–2,500 토큰</strong>을 소비합니다.
-          MCP 복합 시나리오에서 토큰이 급증하는 주요 원인입니다.
-          필요한 시점에만 스크린샷을 요청하거나, 검증이 끝난 후에는 <code>npm test</code>로 전환하세요.
-        </div>
-      </div>
-
-      <div class="tip-box info" style="margin-top:12px;">
-        <span class="tip-icon">💡</span>
-        <div class="tip-content">
-          <strong>Pro vs Max 선택 기준</strong>
-          MCP 직접 조작이나 /gen-playwright-scenario를 하루 5회 이상 사용하면 Pro(~100K/5h)의
-          한계에 근접합니다. 개발 중 반복 검증이 많다면 <strong>Max 5×</strong>가 유리합니다.
-          단순 <code>npm test</code> 위주라면 Pro로 충분합니다.
-        </div>
-      </div>
-    </div>
   </div>
 </section>
 
