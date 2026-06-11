@@ -354,7 +354,7 @@ tr:hover td { background: #f8faff; }
 <section class="section" id="overview">
   <div class="container">
     <div class="section-tag">FRAMEWORK</div>
-    <div class="section-title">Playwright MCP 기반 개발 프레임워크</div>
+    <div class="section-title">Playwright MCP 기반 개발 프레임워크 주요기능</div>
     <div class="section-sub">Claude Code + Playwright MCP로 구성한 TDD 기반 개발 프레임워크입니다.<br>화면 설계부터 TC 자동 생성·실시간 검증·회귀 테스트까지 하나의 사이클로 연결됩니다.</div>
 
     <div class="card-grid">
@@ -364,24 +364,9 @@ tr:hover td { background: #f8faff; }
         <div class="card-desc">data-testid 설계 → TC 자동 생성 → MCP 실시간 검증 → 회귀 테스트의 반복 사이클로 화면 개발과 테스트를 동시에 진행합니다.</div>
       </div>
       <div class="card">
-        <span class="card-icon">🔌</span>
-        <div class="card-title">MCP 실시간 브라우저 제어</div>
-        <div class="card-desc">Claude Code에서 자연어 지시만으로 브라우저를 직접 조작하고 selector를 즉시 검증합니다. 코드를 실행하기 전에 동작을 확인할 수 있습니다.</div>
-      </div>
-      <div class="card">
         <span class="card-icon">🤖</span>
         <div class="card-title">AI 기반 TC 자동 생성</div>
         <div class="card-desc">/gen-playwright-scenario 커맨드로 화면 소스의 data-testid를 분석해 표준 포맷의 TC 파일을 자동으로 생성합니다.</div>
-      </div>
-      <div class="card">
-        <span class="card-icon">♻️</span>
-        <div class="card-title">회귀 테스트 자동화</div>
-        <div class="card-desc">npm test 한 번으로 전체 TC를 병렬 실행합니다. 화면 수정 후 영향 범위를 즉시 확인할 수 있어 안정적인 배포가 가능합니다.</div>
-      </div>
-      <div class="card">
-        <span class="card-icon">🏷️</span>
-        <div class="card-title">data-testid 설계 규칙</div>
-        <div class="card-desc">화면 구조 변경에 독립적인 selector 체계를 팀 전체가 일관된 규칙으로 작성합니다. 유지보수 비용을 최소화하는 핵심 설계 원칙입니다.</div>
       </div>
       <div class="card">
         <span class="card-icon">📊</span>
@@ -504,8 +489,7 @@ npx playwright install chromium</pre>
               <strong>gen-playwright-scenario.md — 스킬 내용 요약</strong>
               스킬 파일은 Claude Code가 커맨드 실행 시 따라야 할 절차를 마크다운으로 정의합니다. 이 스킬은 아래 순서로 동작합니다.
               <ol style="margin-top:10px; padding-left:18px; line-height:2.1; font-size:13px;">
-                <li><strong>화면 정보 수집</strong> — 화면 ID · 라우트 · 뷰 파일 · 주요 기능 목록을 파악합니다.</li>
-                <li><strong>소스 자동 분석</strong> — <code>grep</code>으로 뷰 파일의 <code>data-testid</code>를 전부 추출합니다.</li>
+                <li><strong>화면 정보 수집 & 소스 분석</strong> — 화면 ID · 라우트 · 뷰 파일을 파악하고, <code>grep</code>으로 해당 파일의 <code>data-testid</code>를 전부 추출합니다.</li>
                 <li><strong>TC 파일 생성</strong> — <code>tests/{화면ID}.spec.js</code>를 표준 템플릿으로 생성합니다. TC 번호는 <code>TC-{화면ID}-001</code> 체계를 따릅니다.</li>
                 <li><strong>카테고리별 시나리오 포함</strong> — 렌더링 · 조회 · 유효성 · CRUD · 예외 · 인증 총 6개 카테고리를 자동 작성합니다.</li>
                 <li><strong>helpers/auth.js 확인</strong> — 로그인 헬퍼가 없으면 함께 생성합니다.</li>
@@ -652,155 +636,12 @@ npx playwright install chromium</pre>
   </div>
 </section>
 
-<!-- ===================== 4. Playwright MCP ===================== -->
-<section class="section" id="mcp">
-  <div class="container">
-    <div class="section-tag">MCP</div>
-    <div class="section-title">Playwright MCP 활용법</div>
-    <div class="section-sub">Claude Code에서 자연어로 브라우저를 직접 조작할 수 있습니다.</div>
-
-    <div class="process-flow">
-      <div class="process-step">
-        <div class="process-step-icon">💬</div>
-        <div class="process-step-title">자연어 지시</div>
-        <div class="process-step-desc">Claude에게 테스트 동작 요청</div>
-      </div>
-      <div class="process-step">
-        <div class="process-step-icon">🤖</div>
-        <div class="process-step-title">MCP 호출</div>
-        <div class="process-step-desc">Playwright MCP 도구 실행</div>
-      </div>
-      <div class="process-step">
-        <div class="process-step-icon">🌐</div>
-        <div class="process-step-title">브라우저 조작</div>
-        <div class="process-step-desc">실제 브라우저에서 동작 수행</div>
-      </div>
-      <div class="process-step">
-        <div class="process-step-icon">📊</div>
-        <div class="process-step-title">결과 분석</div>
-        <div class="process-step-desc">스크린샷 + 결과 반환</div>
-      </div>
-    </div>
-
-    <h3 style="font-size:16px; font-weight:700; margin-bottom:12px; color:var(--navy);">MCP로 할 수 있는 것들</h3>
-
-    <div class="card-grid">
-      <div class="card">
-        <span class="card-icon">🔍</span>
-        <div class="card-title">브라우저 탐색 · 스크린샷</div>
-        <div class="card-desc">"로그인하고 sscm0100 화면을 열어줘"라고 지시하면 실제 브라우저에서 수행 후 스크린샷을 반환합니다.</div>
-      </div>
-      <div class="card">
-        <span class="card-icon">✏️</span>
-        <div class="card-title">selector 실시간 검증</div>
-        <div class="card-desc">작성한 data-testid가 실제로 동작하는지 MCP로 즉시 확인합니다. 코드를 실행하기 전에 선택자를 검증할 수 있습니다.</div>
-      </div>
-      <div class="card">
-        <span class="card-icon">🐛</span>
-        <div class="card-title">실시간 디버깅</div>
-        <div class="card-desc">테스트 실패 시 브라우저 상태를 MCP로 확인하여 문제 원인을 즉시 파악하고 수정합니다.</div>
-      </div>
-    </div>
-
-    <div class="code-wrap" style="margin-top:24px;">
-      <div class="code-header">
-        <span class="code-lang">대화 예시</span>
-        <span class="code-label">Claude Code + Playwright MCP</span>
-      </div>
-      <pre><span class="cm">👤 사용자:</span>
-<span class="str">"admin 계정으로 로그인하고 sscm0100 화면을 열어서
- 공통코드 조회 버튼을 클릭한 다음 결과를 확인해줘"</span>
-
-<span class="cm">🤖 Claude (MCP 도구 사용):</span>
-→ playwright_navigate: <span class="str">http://localhost:5173/login</span>
-→ playwright_fill: <span class="str">[data-testid="input-login-id"]</span> → <span class="str">"admin"</span>
-→ playwright_fill: <span class="str">[data-testid="input-login-pw"]</span> → <span class="str">"admin123"</span>
-→ playwright_click: <span class="str">[data-testid="btn-login"]</span>
-→ playwright_click: <span class="str">[data-testid="btn-search"]</span>
-→ playwright_screenshot: <span class="str">결과 스크린샷 반환</span>
-
-<span class="cm">✅ 결과: 8건의 공통코드가 조회되었습니다 (스크린샷 첨부)</span></pre>
-    </div>
-  </div>
-</section>
-
-<!-- ===================== 5. 시나리오 자동 생성 ===================== -->
-<section class="section" id="skill">
-  <div class="container">
-    <div class="section-tag">AI SKILL</div>
-    <div class="section-title">/gen-playwright-scenario 커맨드</div>
-    <div class="section-sub">화면 소스를 분석해 Playwright 테스트 파일을 자동 생성하는 Claude Code 커스텀 커맨드입니다.</div>
-
-    <div class="steps">
-      <div class="step">
-        <div class="step-num">1</div>
-        <div class="step-body">
-          <div class="step-title">커맨드 실행</div>
-          <div class="step-desc">Claude Code 터미널에서 화면 ID를 인자로 슬래시 커맨드를 입력합니다.</div>
-          <div class="code-wrap">
-            <div class="code-header"><span class="code-lang">bash</span><span class="code-label">Claude Code 터미널</span></div>
-            <pre>/gen-playwright-scenario sscm0100</pre>
-          </div>
-        </div>
-      </div>
-
-      <div class="step">
-        <div class="step-num">2</div>
-        <div class="step-body">
-          <div class="step-title">소스 자동 분석</div>
-          <div class="step-desc">Claude가 해당 View 파일에서 <code>data-testid</code>를 추출하고 화면 기능을 파악합니다.</div>
-          <div class="code-wrap">
-            <div class="code-header"><span class="code-lang">분석 결과</span><span class="code-label">자동 추출 예시</span></div>
-            <pre><span class="cm">📂 파일: src/views/Sscm0100View.vue</span>
-
-<span class="cm">🔍 발견된 data-testid 목록:</span>
-  page-sscm0100       → 화면 루트
-  search-area         → 조회 영역
-  btn-search          → 조회 버튼
-  grid-csys010-wrap   → 공통코드 그리드
-  grid-csys011-wrap   → 공통코드값 그리드
-  btn-add-010         → 공통코드 추가
-  btn-save-010        → 공통코드 저장
-  modal-confirm       → 확인 다이얼로그
-  ...
-
-<span class="op">✅ 총 32개 testid 발견 → 시나리오 설계 시작</span></pre>
-          </div>
-        </div>
-      </div>
-
-      <div class="step">
-        <div class="step-num">3</div>
-        <div class="step-body">
-          <div class="step-title">TC 자동 생성</div>
-          <div class="step-desc">추출된 정보를 기반으로 표준 포맷의 Playwright 파일을 생성합니다.</div>
-          <div class="data-table-wrap">
-            <table>
-              <thead>
-                <tr><th>카테고리</th><th>TC 수</th><th>내용</th></tr>
-              </thead>
-              <tbody>
-                <tr><td>렌더링 확인</td><td>1~2</td><td>주요 영역 표시 여부 확인</td></tr>
-                <tr><td>조회 기능</td><td>3~5</td><td>기본조회, 조건필터, Enter키 조회</td></tr>
-                <tr><td>추가/저장</td><td>3~4</td><td>추가, 유효성 실패, 저장 성공</td></tr>
-                <tr><td>삭제</td><td>2~3</td><td>미선택 경고, 다이얼로그 취소/확인</td></tr>
-                <tr><td>예외 처리</td><td>1~2</td><td>변경 중 조회 경고, 빈 결과</td></tr>
-                <tr><td>인증/권한</td><td>1</td><td>비로그인 접근 시 리다이렉트</td></tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
 <!-- ===================== 6. 실행 방법 ===================== -->
 <section class="section" id="run">
   <div class="container">
     <div class="section-tag">EXECUTION</div>
     <div class="section-title">실행 방법</div>
-    <div class="section-sub">목적에 맞는 실행 방법을 선택하세요.</div>
+    <div class="section-sub">목적에 맞는 실행 방법을 선택하세요. (결과 : playwright-report > index.html)</div>
 
     <div class="card-grid">
       <div class="card">
@@ -812,32 +653,7 @@ npx playwright install chromium</pre>
         <div class="card-desc" style="margin-bottom:10px;">Claude는 명령어만 실행하고 결과 출력을 컨텍스트에 포함합니다. 결과 분석을 요청하지 않으면 토큰 소비가 매우 적습니다.</div>
         <div class="code-wrap" style="margin-top:8px;">
           <pre style="padding:10px 14px; font-size:12px;">npm test
-npx playwright test</pre>
-        </div>
-      </div>
-      <div class="card">
-        <span class="card-icon">👁️</span>
-        <div class="card-title">Headed 모드 (브라우저 표시)</div>
-        <div style="display:flex; gap:6px; margin:8px 0;">
-          <span class="badge badge-green">Claude 관여 최소</span>
-        </div>
-        <div class="card-desc" style="margin-bottom:10px;">브라우저 창을 열어 테스트가 실행되는 모습을 시각으로 확인합니다. 시연이나 디버깅에 적합합니다.</div>
-        <div class="code-wrap" style="margin-top:8px;">
-          <pre style="padding:10px 14px; font-size:12px;">npm run test:headed
-
-<span class="cm"># 느리게 실행 (시연용)</span>
-npx playwright test --headed --slow-mo 800</pre>
-        </div>
-      </div>
-      <div class="card">
-        <span class="card-icon">🎛️</span>
-        <div class="card-title">UI 모드 (Playwright GUI)</div>
-        <div style="display:flex; gap:6px; margin:8px 0;">
-          <span class="badge badge-green">Claude 관여 없음</span>
-        </div>
-        <div class="card-desc" style="margin-bottom:10px;">Playwright가 제공하는 자체 GUI 앱을 별도로 열어 TC를 선택·실행합니다. Claude는 실행 명령어만 전달하므로 토큰을 거의 사용하지 않습니다.</div>
-        <div class="code-wrap" style="margin-top:8px;">
-          <pre style="padding:10px 14px; font-size:12px;">npm run test:ui</pre>
+npm run test:headed # 헤드리스 모드에서 테스트 실행 (브라우저 창 열기)</pre>
         </div>
       </div>
       <div class="card">
@@ -849,7 +665,7 @@ npx playwright test --headed --slow-mo 800</pre>
         <div class="card-desc" style="margin-bottom:10px;">자연어로 Claude에게 지시하면 MCP를 통해 브라우저를 직접 조작하고 스크린샷을 반환합니다. 스크린샷 1장당 ~1,500–2,500 토큰이 소비됩니다.</div>
         <div class="code-wrap" style="margin-top:8px;">
           <pre style="padding:10px 14px; font-size:12px;"><span class="cm"># 자연어로 지시</span>
-<span class="str">"admin으로 로그인하고 조회 버튼 클릭 후 결과 확인해줘"</span></pre>
+<span class="str">"admin으로 로그인하고 조회 버튼 클릭 후 결과 확인 후 보고해줘 (테스트 이해를 돕기위해 브라우저를 띄워서 작업해줘)(시연을 위해 속도 천천히)"</span></pre>
         </div>
       </div>
       <div class="card">
@@ -863,86 +679,8 @@ npx playwright test --headed --slow-mo 800</pre>
           <pre style="padding:10px 14px; font-size:12px;">/gen-playwright-scenario sscm0100</pre>
         </div>
       </div>
-      <div class="card">
-        <span class="card-icon">🔍</span>
-        <div class="card-title">결과 분석 요청</div>
-        <div style="display:flex; gap:6px; margin:8px 0;">
-          <span class="badge badge-orange">Claude 관여 중간</span>
-        </div>
-        <div class="card-desc" style="margin-bottom:10px;">npm test 실행 후 Claude에게 "실패 원인 분석해줘"를 요청하면 터미널 출력 + 코드 리딩이 추가되어 토큰이 늘어납니다.</div>
-        <div class="code-wrap" style="margin-top:8px;">
-          <pre style="padding:10px 14px; font-size:12px;">npm test
-<span class="cm"># 이후 Claude에게 결과 분석 요청</span></pre>
-        </div>
-      </div>
     </div>
 
-  </div>
-</section>
-
-<!-- ===================== 8. 결과 분석 ===================== -->
-<section class="section" id="report">
-  <div class="container">
-    <div class="section-tag">REPORT</div>
-    <div class="section-title">테스트 결과 분석</div>
-    <div class="section-sub">HTML 리포트로 TC별 성공/실패 현황을 확인합니다.</div>
-
-    <div class="steps">
-      <div class="step">
-        <div class="step-num">1</div>
-        <div class="step-body">
-          <div class="step-title">HTML 리포트 열기</div>
-          <div class="code-wrap">
-            <div class="code-header"><span class="code-lang">bash</span></div>
-            <pre><span class="cm"># 리포트 생성 후 브라우저로 열기</span>
-npm run test:report
-
-<span class="cm"># 또는</span>
-npx playwright show-report playwright-report</pre>
-          </div>
-        </div>
-      </div>
-
-      <div class="step">
-        <div class="step-num">2</div>
-        <div class="step-body">
-          <div class="step-title">실패 TC 분석</div>
-          <div class="step-desc">실패한 TC를 클릭하면 다음 정보를 확인할 수 있습니다.</div>
-          <div class="data-table-wrap" style="margin-top:12px;">
-            <table>
-              <thead><tr><th>정보</th><th>내용</th></tr></thead>
-              <tbody>
-                <tr><td>📸 스크린샷</td><td>실패 시점의 브라우저 화면 캡처</td></tr>
-                <tr><td>📹 비디오</td><td>테스트 전체 실행 영상 (on-first-retry)</td></tr>
-                <tr><td>🔍 Trace</td><td>DOM 상태, 네트워크, 콘솔 로그 전체 기록</td></tr>
-                <tr><td>📝 스텝 로그</td><td>각 동작의 성공/실패 및 소요 시간</td></tr>
-                <tr><td>🌐 Error</td><td>assertion 실패 메시지 (예상값 vs 실제값)</td></tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-
-      <div class="step">
-        <div class="step-num">3</div>
-        <div class="step-body">
-          <div class="step-title">Trace Viewer 활용</div>
-          <div class="code-wrap">
-            <div class="code-header"><span class="code-lang">bash</span></div>
-            <pre><span class="cm"># 특정 실패 TC의 trace 파일 직접 열기</span>
-npx playwright show-trace playwright-report/data/xxxxx.zip</pre>
-          </div>
-          <div class="tip-box info" style="margin-top:12px;">
-            <span class="tip-icon">🔍</span>
-            <div class="tip-content">
-              <strong>Trace Viewer란?</strong>
-              타임라인 슬라이더로 각 동작 시점의 DOM 스냅샷, 네트워크 요청,
-              콘솔 로그를 모두 확인할 수 있는 디버깅 도구입니다.
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
   </div>
 </section>
 
@@ -1000,7 +738,7 @@ npx playwright show-trace playwright-report/data/xxxxx.zip</pre>
     <div class="tip-box success">
       <span class="tip-icon">✅</span>
       <div class="tip-content">
-        <strong>네, 맞습니다 — npm test는 Claude와 무관합니다</strong>
+        <strong>npm test는 Claude와 무관합니다</strong>
         한 번 생성된 <code>.spec.js</code> 파일은 순수한 JavaScript 코드입니다.
         이후 <code>npm test</code>는 Node.js + Playwright 엔진이 단독으로 실행하며,
         Claude API 호출이 전혀 없습니다. <strong>토큰 소비 없이 무한정 반복 실행이 가능합니다.</strong>
